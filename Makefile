@@ -2,4 +2,4 @@
 
 .PHONY: test
 test: 
-	env PYTHONPATH=. pytest .
+	env PYTHONPATH=. py.test --cov=./ .
