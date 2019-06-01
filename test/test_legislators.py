@@ -15,5 +15,7 @@ def test_election_list(client):
     jData = json.loads(rv.data)
 
     assert 200 == rv.status_code
-    assert "hello" in jData
-    assert "world" == jData['hello']
+    assert 'legislator' in jData
+    assert 2 == len(jData['legislator'])
+    assert 'year' in jData['legislator'][0]
+    assert 'link' in jData['legislator'][0]
