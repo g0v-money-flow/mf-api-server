@@ -4,5 +4,12 @@ from common.data_loader import data
 class ElectionList(Resource):
     def get(self):
         return {
-            'legislator':[{'year':e.year, 'link': 'link'} for e in data]
+            'data':{
+                e_type:[
+                    {
+                        'year':e.year, 
+                        'link':'link'
+                    } for e in e_collection.values()
+                ] for e_type, e_collection in data.items()
+            }
         }
