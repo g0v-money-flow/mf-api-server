@@ -8,7 +8,7 @@ class ElectionList(Resource):
                 e_type:[
                     {
                         'year':e.year, 
-                        'link':'link'
+                        'link':'/{}Election/{}/regions'.format(e_type, e.year)
                     } for e in e_collection.values()
                 ] for e_type, e_collection in data.items()
             }
