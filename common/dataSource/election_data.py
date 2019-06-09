@@ -70,8 +70,8 @@ class Candidate:
     
     @classmethod
     def generateId(cls):
-        tmp = cls.id_counter
         cls.id_counter += 1
+        tmp = cls.id_counter
         return tmp
     
     def __init__(self, region, person, party, is_elected):

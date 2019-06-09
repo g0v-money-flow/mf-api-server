@@ -57,7 +57,6 @@ def test_show_nonexist_constitution(client):
 
     assert 404 == rv.status_code
 
-
 def test_show_a_constitution(client):
     rv = client.get('/legislatorElection/2016/constitutions/63-000-01-000-0000')
     jData = json.loads(rv.data)['data']
@@ -86,4 +85,33 @@ def test_show_a_constitution(client):
     for c in jData['constitutions']:
         assert jData['id'] != c['link'].split('/')[-1]
     
+def test_show_wrong_type_candidate(client):
+    rv = client.get('/legisrElection/2016/candidates/63')
+
+    assert 404 == rv.status_code
+
+def test_show_nodata_year_candidate(client):
+    rv = client.get('/legislatorElection/2011/candidates/63')
+
+    assert 404 == rv.status_code
+
+def test_show_nonexist_constitution(client):
+    rv = client.get('/legislatorElection/2016/candidates/111163')
+
+    assert 404 == rv.status_code
+
+def test_show_a_candidate(client):
+    rv = client.get('/legislatorElection/2016/candidates/2')
+    jData = json.loads(rv.data)['data']
+
+    assert 200 == rv.status_code
+    assert 'name' in jData
+    assert 'id' in jData
+    assert 'party' in jData
+    assert 'is_elected' in jData
+    assert 'num_of_vote' in jData
+    assert 'rate_of_vote' in jData
+    assert 'finance_data' in jData
+    assert 'income' in jData['finance_data']
+    assert 'outcome' in jData['finance_data']
 

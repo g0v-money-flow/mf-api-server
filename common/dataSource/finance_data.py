@@ -69,7 +69,7 @@ class PersonalFinanceData:
 
 def getFinanceData(name):
     finance_data = PersonalFinanceData()
-    with open('rawData/legislator2016/finance_data/{}.csv'.format(name), 'r') as base_file:
+    with open('common/dataSource/rawData/legislator2016/finance_data/{}.csv'.format(name), 'r') as base_file:
         reader = csv.reader(base_file)
         for line in reader:
             try:
