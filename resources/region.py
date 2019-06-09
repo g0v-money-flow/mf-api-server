@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from flask import abort
 from common.data_loader import data
+from conf import CONF
 
 class RegionList(Resource):
     def get(self, electionName, year):
@@ -17,7 +18,7 @@ class RegionList(Resource):
                 'regions':[
                     {
                         'name':region_name,
-                        'link':'/{}Election/{}/constitutions/{}'.format(e_type, e_year, RegionList.__getFirstConstitution(region_obj))
+                        'link':CONF['uri_prefix']+'/{}Election/{}/constitutions/{}'.format(e_type, e_year, RegionList.__getFirstConstitution(region_obj))
                     } for region_name, region_obj in data[e_type][e_year].city_db.items()
                 ]
             }

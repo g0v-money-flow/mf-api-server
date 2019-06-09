@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from flask import abort
 from common.data_loader import data
+from conf import CONF
 
 class Constitution(Resource):
     def get(self, electionName, year, id):
@@ -30,12 +31,12 @@ class Constitution(Resource):
                         'num_of_vote': c.num_of_vote,
                         'rate_of_vote': c.rate_of_vote,
                         'finance_data': Constitution._gen_finance_data(c),
-                        'detail': '/{}Election/{}/candidates/{}'.format(e_type, e_year, c.id)
+                        'detail': CONF['uri_prefix'] + '/{}Election/{}/candidates/{}'.format(e_type, e_year, c.id)
                     } for c in target.get_candidates()
                 ],
                 'constitutions':[{
                     'name': r['name'],
-                    'link': '/{}Election/{}/constitutions/{}'.format(e_type, e_year, r['id'])
+                    'link': CONF['uri_prefix'] + '/{}Election/{}/constitutions/{}'.format(e_type, e_year, r['id'])
                 } for r in target.city.values() if r['id'] != id]
             }
         }

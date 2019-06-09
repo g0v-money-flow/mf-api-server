@@ -4,6 +4,7 @@ import tempfile
 import json
 import pytest
 from app import app
+from conf import CONF
 
 @pytest.fixture
 def client():
@@ -19,7 +20,8 @@ def test_election_list(client):
     assert 2 == len(jData['legislator'])
     assert 'year' in jData['legislator'][0]
     assert 'link' in jData['legislator'][0]
-    assert re.match("^/[a-z]+Election/[0-9]{4,4}/regions$", jData['legislator'][0]['link'])
+    uri_pattern = '^'+CONF['uri_prefix']+'/[a-z]+Election/[0-9]{4,4}/regions$'
+    assert re.match(uri_pattern, jData['legislator'][0]['link'])
 
 def test_no_target_election_exist(client):
     rv = client.get('/stupidElection/2016/regions')
@@ -40,7 +42,8 @@ def test_region_list(client):
     assert len(jData['regions']) > 1
     assert 'name' in jData['regions'][0]
     assert 'link' in jData['regions'][0]
-    assert re.match('^/[a-z]+Election/[0-9]{4,4}/constitutions/[0-9-]+$', jData['regions'][0]['link'])
+    uri_pattern = '^'+CONF['uri_prefix']+'/[a-z]+Election/[0-9]{4,4}/constitutions/[0-9-]+$'
+    assert re.match(uri_pattern, jData['regions'][0]['link'])
     
 def test_show_wrong_type_constitution(client):
     rv = client.get('/legisrElection/2016/constitutions/63')
@@ -75,13 +78,16 @@ def test_show_a_constitution(client):
     assert 'rate_of_vote' in jData['candidates'][0]
     assert 'finance_data' in jData['candidates'][0]
     assert 'detail' in jData['candidates'][0]
-    assert re.match('^/[a-z]+Election/[0-9]{4,4}/candidates/[0-9]+$', jData['candidates'][0]['detail'])
+    uri_pattern = '^'+ CONF['uri_prefix']+'/[a-z]+Election/[0-9]{4,4}/candidates/[0-9]+$'
+    assert re.match(uri_pattern, jData['candidates'][0]['detail'])
 
     assert 'constitutions' in jData
     assert len(jData['constitutions']) > 1
     assert 'name' in jData['constitutions'][0]
     assert 'link' in jData['constitutions'][0]
-    assert re.match('^/[a-z]+Election/[0-9]{4,4}/constitutions/[0-9-]+$', jData['constitutions'][0]['link'])
+
+    uri_pattern = '^'+CONF['uri_prefix']+'/[a-z]+Election/[0-9]{4,4}/constitutions/[0-9-]+$'
+    assert re.match(uri_pattern, jData['constitutions'][0]['link'])
     for c in jData['constitutions']:
         assert jData['id'] != c['link'].split('/')[-1]
     
