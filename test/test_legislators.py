@@ -37,7 +37,8 @@ def test_region_list(client):
 
     assert 200 == rv.status_code
     assert 'regions' in jData
-    assert 2 == len(jData['regions'])
+    assert len(jData['regions']) > 1
     assert 'name' in jData['regions'][0]
     assert 'link' in jData['regions'][0]
+    assert re.match('^/[a-z]+Election/[0-9]{4,4}/[0-9-]+$', jData['regions'][0]['link'])
 
