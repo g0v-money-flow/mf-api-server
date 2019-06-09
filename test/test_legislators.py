@@ -51,7 +51,7 @@ def test_show_nodata_year_constitution(client):
     rv = client.get('/legislatorElection/2011/constitutions/63')
 
     assert 404 == rv.status_code
-    
+
 def test_show_nonexist_constitution(client):
     rv = client.get('/legislatorElection/2016/constitutions/63')
 
@@ -81,5 +81,7 @@ def test_show_a_constitution(client):
     assert 'name' in jData['constitutions'][0]
     assert 'link' in jData['constitutions'][0]
     assert re.match('^/[a-z]+Election/[0-9]{4,4}/constitutions/[0-9-]+$', jData['constitutions'][0]['link'])
+    for c in jData['constitutions']:
+        assert jData['id'] != c['link'].split('/')[-1]
     
 

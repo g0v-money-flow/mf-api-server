@@ -35,7 +35,7 @@ class Constitution(Resource):
                 'constitutions':[{
                     'name': r['name'],
                     'link': '/{}Election/{}/constitutions/{}'.format(e_type, e_year, r['id'])
-                } for r in target.city.values()]
+                } for r in target.city.values() if r['id'] != id]
             }
         }
 
