@@ -40,5 +40,46 @@ def test_region_list(client):
     assert len(jData['regions']) > 1
     assert 'name' in jData['regions'][0]
     assert 'link' in jData['regions'][0]
-    assert re.match('^/[a-z]+Election/[0-9]{4,4}/[0-9-]+$', jData['regions'][0]['link'])
+    assert re.match('^/[a-z]+Election/[0-9]{4,4}/constitutions/[0-9-]+$', jData['regions'][0]['link'])
+    
+def test_show_wrong_type_constitution(client):
+    rv = client.get('/legisrElection/2016/constitutions/63')
+
+    assert 404 == rv.status_code
+
+def test_show_nodata_year_constitution(client):
+    rv = client.get('/legislatorElection/2011/constitutions/63')
+
+    assert 404 == rv.status_code
+    
+def test_show_nonexist_constitution(client):
+    rv = client.get('/legislatorElection/2016/constitutions/63')
+
+    assert 404 == rv.status_code
+
+
+def test_show_a_constitution(client):
+    rv = client.get('/legislatorElection/2016/constitutions/63-000-01-000-0000')
+    jData = json.loads(rv.data)['data']
+
+    assert 200 == rv.status_code
+    assert 'id' in jData
+    assert '63-000-01-000-0000' == jData['id']
+    assert 'name' in jData
+    assert 'candidates' in jData
+    assert len(jData['candidates']) > 1
+    assert 'name' in jData['candidates'][0]
+    assert 'id' in jData['candidates'][0]
+    assert 'party' in jData['candidates'][0]
+    assert 'is_elected' in jData['candidates'][0]
+    assert 'num_of_vote' in jData['candidates'][0]
+    assert 'rate_of_vote' in jData['candidates'][0]
+    assert 'finance_data' in jData['candidates'][0]
+
+    assert 'constitutions' in jData
+    assert len(jData['constitutions']) > 1
+    assert 'name' in jData['constitutions'][0]
+    assert 'link' in jData['constitutions'][0]
+    assert re.match('^/[a-z]+Election/[0-9]{4,4}/constitutions/[0-9-]+$', jData['constitutions'][0]['link'])
+    
 

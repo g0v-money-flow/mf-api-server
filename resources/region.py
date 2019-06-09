@@ -17,12 +17,12 @@ class RegionList(Resource):
                 'regions':[
                     {
                         'name':region_name,
-                        'link':'/{}Election/{}/{}'.format(e_type, e_year, RegionList.__getFirstConstitute(region_obj))
+                        'link':'/{}Election/{}/constitutions/{}'.format(e_type, e_year, RegionList.__getFirstConstitution(region_obj))
                     } for region_name, region_obj in data[e_type][e_year].city_db.items()
                 ]
             }
         }
 
     @classmethod
-    def __getFirstConstitute(cls, region_obj):
+    def __getFirstConstitution(cls, region_obj):
         return sorted(region_obj.keys())[0]
