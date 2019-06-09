@@ -75,6 +75,8 @@ def test_show_a_constitution(client):
     assert 'num_of_vote' in jData['candidates'][0]
     assert 'rate_of_vote' in jData['candidates'][0]
     assert 'finance_data' in jData['candidates'][0]
+    assert 'detail' in jData['candidates'][0]
+    assert re.match('^/[a-z]+Election/[0-9]{4,4}/candidates/[0-9]+$', jData['candidates'][0]['detail'])
 
     assert 'constitutions' in jData
     assert len(jData['constitutions']) > 1

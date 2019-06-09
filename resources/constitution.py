@@ -29,7 +29,8 @@ class Constitution(Resource):
                         'is_elected': c.is_elected,
                         'num_of_vote': c.num_of_vote,
                         'rate_of_vote': c.rate_of_vote,
-                        'finance_data': Constitution._gen_finance_data(c)
+                        'finance_data': Constitution._gen_finance_data(c),
+                        'detail': '/{}Election/{}/candidates/{}'.format(e_type, e_year, c.id)
                     } for c in target.get_candidates()
                 ],
                 'constitutions':[{
