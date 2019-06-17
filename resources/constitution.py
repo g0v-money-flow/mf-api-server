@@ -1,22 +1,21 @@
 from flask_restful import Resource
 from flask import abort
-from common.data_loader import data
+from common.data_loader import data, get_election
 from conf import CONF
 
 class Constitution(Resource):
     def get(self, electionName, year, id):
         e_type = electionName[:-8]
         e_year = str(year)
-        if e_type not in data:
+        election = get_election(e_type, e_year)
+        
+        if election is None:
             abort(404)
         
-        if e_year not in data[e_type]:
-            abort(404)
-
-        if id not in data[e_type][e_year].region_db:
+        if id not in election.region_db:
             abort(404)
         
-        target = data[e_type][e_year].region_db[id]
+        target = election.region_db[id]
 
         return {
             'data':{

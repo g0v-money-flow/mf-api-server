@@ -12,7 +12,7 @@ class Region:
         self.name = name
         self.candidates = {}
         self.city = city
-    
+
     def has_candidate(self):
         return len(self.candidates) > 0
 
@@ -83,6 +83,21 @@ class Candidate:
         self.vice = None
         self.finance_data = None
 
+    @property
+    def name(self):
+        return self.person.name
+
+    @property
+    def party_name(self):
+        return self.party.name
+
+    @property
+    def vice_candidate(self):
+        if self.vice is None:
+            return None
+        else:
+            return self.vice.name
+
     def set_vice_candidate(self, person):
         self.vice = person
 
@@ -101,11 +116,16 @@ class Candidate:
 
 class Election:
     def __init__(self):
+        self.e_type = 'legislator' 
         self.year = 2016
         self.city_db = {}
         self.region_db = {}
         self.party_db = {}
         self.cand_db = {}
+
+    @property
+    def name(self):
+        return '{} {} Election'.format(self.year, str.capitalize(self.e_type))
 
     def load_data(self):
         with open('common/dataSource/rawData/legislator2016/elbase_T1.csv', 'r') as base_file:
@@ -128,7 +148,11 @@ class Election:
                         'id': region_code
                     }
 
-                self.region_db[region_code] = Region(region_code, name, city)
+                region = Region(region_code, name, city)
+                self.region_db[region_code] = region
+                
+                if city is not None:
+                    city[region_code]['instance'] = region
 
         with open('common/dataSource/rawData/legislator2016/elpaty.csv', 'r') as party_file:
             reader = csv.reader(party_file)

@@ -51,6 +51,13 @@ class RecordCollection:
     def getValueSum(self):
         return self.val_sum
 
+    @property
+    def total(self):
+        return self.val_sum
+
+    @property
+    def items(self):
+        return [{'name': k, 'amount': v} for k, v in self.val_sum_set.items()]
 
 class PersonalFinanceData:
     def __init__(self):
