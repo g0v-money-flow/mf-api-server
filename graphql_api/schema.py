@@ -58,6 +58,11 @@ class Election(ObjectType):
 
 class Query(ObjectType):
     election = Field(Election, etype = String(required = True), year = Int(required = True))
+    all = List(Election)
     def resolve_election(self, info, etype, year):
         return get_election(etype, str(year))
 
+    def resolve_all(self, info):
+        return [
+            get_election('legislator', '2016')
+        ]
