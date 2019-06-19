@@ -22,7 +22,7 @@ def get_election(e_type, e_year):
 def get_regions(election):
     return [{
         'name':region_name,
-        'constitutions': region_obj
+        'constituencies': region_obj
     } for region_name, region_obj in election.city_db.items()]
 
 election = election_data.Election()

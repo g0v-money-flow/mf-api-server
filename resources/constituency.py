@@ -3,7 +3,7 @@ from flask import abort
 from common.data_loader import data, get_election
 from conf import CONF
 
-class Constitution(Resource):
+class Constituency(Resource):
     def get(self, electionName, year, id):
         e_type = electionName[:-8]
         e_year = str(year)
@@ -29,13 +29,13 @@ class Constitution(Resource):
                         'is_elected': c.is_elected,
                         'num_of_vote': c.num_of_vote,
                         'rate_of_vote': c.rate_of_vote,
-                        'finance_data': Constitution._gen_finance_data(c),
+                        'finance_data': Constituency._gen_finance_data(c),
                         'detail': CONF['uri_prefix'] + '/{}Election/{}/candidates/{}'.format(e_type, e_year, c.id)
                     } for c in target.get_candidates()
                 ],
-                'constitutions':[{
+                'constituencies':[{
                     'name': r['name'],
-                    'link': CONF['uri_prefix'] + '/{}Election/{}/constitutions/{}'.format(e_type, e_year, r['id'])
+                    'link': CONF['uri_prefix'] + '/{}Election/{}/constituencies/{}'.format(e_type, e_year, r['id'])
                 } for r in target.city.values() if r['id'] != id]
             }
         }

@@ -17,8 +17,8 @@ class RegionList(Resource):
                 'regions':[
                     {
                         'name':region['name'],
-                        'link':CONF['uri_prefix']+'/{}Election/{}/constitutions/{}'.format(
-                            e_type, e_year, RegionList.__getFirstConstitution(region['constitutions'])
+                        'link':CONF['uri_prefix']+'/{}Election/{}/constituencies/{}'.format(
+                            e_type, e_year, RegionList.__getFirstConstituency(region['constituencies'])
                         )
                     } for region in get_regions(election)
                 ]
@@ -26,5 +26,5 @@ class RegionList(Resource):
         }
 
     @classmethod
-    def __getFirstConstitution(cls, region_obj):
+    def __getFirstConstituency(cls, region_obj):
         return sorted(region_obj.keys())[0]

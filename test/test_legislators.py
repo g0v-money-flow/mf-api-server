@@ -42,26 +42,26 @@ def test_region_list(client):
     assert len(jData['regions']) > 1
     assert 'name' in jData['regions'][0]
     assert 'link' in jData['regions'][0]
-    uri_pattern = '^'+CONF['uri_prefix']+'/[a-z]+Election/[0-9]{4,4}/constitutions/[0-9-]+$'
+    uri_pattern = '^'+CONF['uri_prefix']+'/[a-z]+Election/[0-9]{4,4}/constituencies/[0-9-]+$'
     assert re.match(uri_pattern, jData['regions'][0]['link'])
     
-def test_show_wrong_type_constitution(client):
-    rv = client.get('/legisrElection/2016/constitutions/63')
+def test_show_wrong_type_constituency(client):
+    rv = client.get('/legisrElection/2016/constituencies/63')
 
     assert 404 == rv.status_code
 
-def test_show_nodata_year_constitution(client):
-    rv = client.get('/legislatorElection/2011/constitutions/63')
+def test_show_nodata_year_constituency(client):
+    rv = client.get('/legislatorElection/2011/constituencies/63')
 
     assert 404 == rv.status_code
 
-def test_show_nonexist_constitution(client):
-    rv = client.get('/legislatorElection/2016/constitutions/63')
+def test_show_nonexist_constituency(client):
+    rv = client.get('/legislatorElection/2016/constituencies/63')
 
     assert 404 == rv.status_code
 
-def test_show_a_constitution(client):
-    rv = client.get('/legislatorElection/2016/constitutions/63-000-01-000-0000')
+def test_show_a_constituency(client):
+    rv = client.get('/legislatorElection/2016/constituencies/63-000-01-000-0000')
     jData = json.loads(rv.data)['data']
 
     assert 200 == rv.status_code
@@ -81,14 +81,14 @@ def test_show_a_constitution(client):
     uri_pattern = '^'+ CONF['uri_prefix']+'/[a-z]+Election/[0-9]{4,4}/candidates/[0-9]+$'
     assert re.match(uri_pattern, jData['candidates'][0]['detail'])
 
-    assert 'constitutions' in jData
-    assert len(jData['constitutions']) > 1
-    assert 'name' in jData['constitutions'][0]
-    assert 'link' in jData['constitutions'][0]
+    assert 'constituencies' in jData
+    assert len(jData['constituencies']) > 1
+    assert 'name' in jData['constituencies'][0]
+    assert 'link' in jData['constituencies'][0]
 
-    uri_pattern = '^'+CONF['uri_prefix']+'/[a-z]+Election/[0-9]{4,4}/constitutions/[0-9-]+$'
-    assert re.match(uri_pattern, jData['constitutions'][0]['link'])
-    for c in jData['constitutions']:
+    uri_pattern = '^'+CONF['uri_prefix']+'/[a-z]+Election/[0-9]{4,4}/constituencies/[0-9-]+$'
+    assert re.match(uri_pattern, jData['constituencies'][0]['link'])
+    for c in jData['constituencies']:
         assert jData['id'] != c['link'].split('/')[-1]
     
 def test_show_wrong_type_candidate(client):
@@ -101,7 +101,7 @@ def test_show_nodata_year_candidate(client):
 
     assert 404 == rv.status_code
 
-def test_show_nonexist_constitution(client):
+def test_show_nonexist_constituency(client):
     rv = client.get('/legislatorElection/2016/candidates/111163')
 
     assert 404 == rv.status_code

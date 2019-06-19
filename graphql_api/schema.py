@@ -35,7 +35,7 @@ class Candidate(ObjectType):
     def resolve_finance(parent, info):
         return parent.finance_data
 
-class Constitution(ObjectType):
+class Constituency(ObjectType):
     name = String()
     candidates = List(Candidate)
 
@@ -44,10 +44,10 @@ class Constitution(ObjectType):
 
 class Region(ObjectType):
     name = String()
-    constitutions = List(Constitution)
+    constituencies = List(Constituency)
 
-    def resolve_constitutions(parent, info):
-        return parent['constitutions'].values()
+    def resolve_constituencies(parent, info):
+        return parent['constituencies'].values()
 
 class Election(ObjectType):
     name = String()
