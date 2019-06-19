@@ -25,6 +25,14 @@ def get_regions(election):
         'constituencies': region_obj
     } for region_name, region_obj in election.city_db.items()]
 
+def get_candidate(name):
+    for etype in data.values():
+        for e in etype.values():
+            for cand in e.cand_db.values():
+                if cand.name == name:
+                    return cand
+    return None
+    
 election = election_data.Election()
 election.load_data()
 data = load_data()

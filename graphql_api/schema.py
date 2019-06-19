@@ -1,6 +1,6 @@
 from graphene import ObjectType, String, Int, Boolean, Float, List, Field
 
-from common.data_loader import get_election, get_regions
+from common.data_loader import get_election, get_regions, get_candidate
 
 class FinanceCategoryItem(ObjectType):
     name = String()
@@ -31,9 +31,17 @@ class Candidate(ObjectType):
     num_of_vote = Int()
     rate_of_vote = Float()
     finance = Field(Finance)
+    constituency = Field(lambda: Constituency)
 
     def resolve_finance(parent, info):
         return parent.finance_data
+
+    def resolve_constituency(parent, info):
+        spt = parent.region.name.find('第')
+        return {
+            'name': parent.region.name[spt:],
+            'instance': parent.region
+        }
 
 class Constituency(ObjectType):
     name = String()
@@ -59,6 +67,8 @@ class Election(ObjectType):
 class Query(ObjectType):
     election = Field(Election, etype = String(required = True), year = Int(required = True))
     all = List(Election)
+    candidate = Field(Candidate, name = String(required = True))
+
     def resolve_election(self, info, etype, year):
         return get_election(etype, str(year))
 
@@ -66,3 +76,6 @@ class Query(ObjectType):
         return [
             get_election('legislator', '2016')
         ]
+    
+    def resolve_candidate(self, info, name):
+        return get_candidate(name)
