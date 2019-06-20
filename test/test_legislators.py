@@ -17,7 +17,7 @@ def test_election_list(client):
 
     assert 200 == rv.status_code
     assert 'legislator' in jData
-    assert 2 == len(jData['legislator'])
+    assert 1 == len(jData['legislator'])
     assert 'year' in jData['legislator'][0]
     assert 'link' in jData['legislator'][0]
     uri_pattern = '^'+CONF['uri_prefix']+'/[a-z]+Election/[0-9]{4,4}/regions$'
