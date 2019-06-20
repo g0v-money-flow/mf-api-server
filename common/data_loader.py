@@ -1,10 +1,12 @@
 import csv
+import os
 from common.model.region import Region
 from common.model.party import Party
 from common.model.person import Person 
 from common.model.candidate import Candidate
 from common.model.election import Election
 from common.dataSource import finance_data
+from common.dataDiscover import findAllData
 
 
 def get_election(e_type, e_year):
@@ -29,11 +31,10 @@ def get_candidate(name):
                 if cand.name == name:
                     return cand
     return None
-    
-def load_data():
-    election = Election()
 
-    with open('common/dataSource/rawData/legislator2016/elbase_T1.csv', 'r') as base_file:
+def load_data(base_file, party_file, cand_file, tks_file):
+    election = Election()
+    with open(base_file, 'r') as base_file:
         reader = csv.reader(base_file)
         for line in reader:
             region_code = "-".join(line[0:5])
@@ -59,7 +60,7 @@ def load_data():
             if city is not None:
                 city[region_code]['instance'] = region
 
-    with open('common/dataSource/rawData/legislator2016/elpaty.csv', 'r') as party_file:
+    with open(party_file, 'r') as party_file:
         reader = csv.reader(party_file)
         for line in reader:
             node = {}
@@ -68,7 +69,7 @@ def load_data():
 
             election.party_db[node['party_num']] = Party(node['party_name'])
 
-    with open('common/dataSource/rawData/legislator2016/elcand_T1.csv', 'r') as cand_file:
+    with open(cand_file, 'r') as cand_file:
         vice_list = []
         reader = csv.reader(cand_file)
         for line in reader:
@@ -109,7 +110,7 @@ def load_data():
             candidate = region.get_candidate(node['num'])
             candidate.set_vice_candidate(node['person'])
 
-    with open('common/dataSource/rawData/legislator2016/elctks_T1.csv', 'r') as ticket_file:
+    with open(tks_file, 'r') as ticket_file:
         reader = csv.reader(ticket_file)
         for line in reader:
             node = {}
@@ -136,8 +137,11 @@ def load_data():
 
     return election
 
+
+data_sources = findAllData()
 data = {
     'legislator': {
-        '2016': load_data()
+        source['year']: load_data(source['base_file'], source['party_file'], source['cand_file'], source['tks_file'])
+            for source in data_sources if source['name'] == 'legislator'
     }
 }
