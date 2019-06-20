@@ -40,10 +40,12 @@ class Candidate(ObjectType):
         spt = parent.region.name.find('第')
         return {
             'name': parent.region.name[spt:],
+            'id': parent.region.region_code,
             'instance': parent.region
         }
 
 class Constituency(ObjectType):
+    id = String()
     name = String()
     candidates = List(Candidate)
 
