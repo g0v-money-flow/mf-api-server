@@ -17,17 +17,21 @@ class Candidate(Resource):
         
         target = data[e_type][e_year].cand_db[id]
 
-        return {
-             'data': {
+        result = {
+            'data': {
                 'id': target.id,
                 'party': target.party.name,
                 'name': target.person.name,
                 'is_elected': target.is_elected,
                 'num_of_vote': target.num_of_vote,
                 'rate_of_vote': target.rate_of_vote,
-                'finance_data': Candidate._gen_finance_detail_record(target),
+                'finance_data': Candidate._gen_finance_detail_record(target)
             }
         }
+        if target.vice:
+            result['data']['vice_candidate'] = target.vice.name
+
+        return result
 
     @classmethod
     def _gen_finance_detail_record(cls, candidate):

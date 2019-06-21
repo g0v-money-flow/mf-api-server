@@ -45,14 +45,17 @@ def load_data(base_file, party_file, cand_file, tks_file):
             if spt != -1:
                 city_name = name[:spt]
                 region_name = name[spt:]
+            else:
+                city_name = name
+                region_name = name
 
-                if city_name not in election.city_db:
-                    election.city_db[city_name] = {}
-                city = election.city_db[city_name]
-                city[region_code]={
-                    'name': region_name,
-                    'id': region_code
-                }
+            if city_name not in election.city_db:
+                election.city_db[city_name] = {}
+            city = election.city_db[city_name]
+            city[region_code]={
+                'name': region_name,
+                'id': region_code
+            }
 
             region = Region(region_code, name, city)
             election.region_db[region_code] = region
@@ -135,6 +138,19 @@ def load_data(base_file, party_file, cand_file, tks_file):
             except FileNotFoundError:
                 pass
 
+    # clean invalid region
+    delete_region = [region for region in election.region_db.values() if len(region.candidates) == 0]
+    for region in delete_region:
+        code = region.region_code
+        del region.city[code]
+        del election.region_db[code]
+        
+    # clean invalid city
+    delete_city = [id for id, city in election.city_db.items() if len(city) == 0]
+    for id in delete_city:
+        del election.city_db[id]
+
+
     return election
 
 
@@ -143,5 +159,9 @@ data = {
     'legislator': {
         source['year']: load_data(source['base_file'], source['party_file'], source['cand_file'], source['tks_file'])
             for source in data_sources if source['name'] == 'legislator'
+    },
+    'president': {
+        source['year']: load_data(source['base_file'], source['party_file'], source['cand_file'], source['tks_file'])
+            for source in data_sources if source['name'] == 'president'
     }
 }

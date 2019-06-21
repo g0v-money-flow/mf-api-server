@@ -30,4 +30,4 @@ def findDataSource(folderName):
 
 def findAllData():
     folders = os.listdir('common/dataSource/rawData/')
-    return [findDataSource(f) for f in folders]
+    return [findDataSource(f) for f in folders if re.match('^[a-zA-Z]+[0-9]+$', f)]
