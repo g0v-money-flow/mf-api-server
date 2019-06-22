@@ -22,9 +22,10 @@ class RecordCollection:
     def setSummary(self, summary):
         for name, amount in summary.items():
             self.val_sum_set[name] = amount
+            self.item_count_set[name] = 0
             self.val_sum += amount
 
-    def addRecord(self, record, skip_finance_type = []):
+    def addRecord(self, record, skip_finance_type=[]):
         record_type = record.record_type
 
         if record_type not in skip_finance_type:
@@ -44,23 +45,23 @@ class RecordCollection:
 
     def getRecords(self):
         result = {
-            r_type:{
+            r_type: {
                 'sum': self.val_sum_set[r_type],
                 'item_count': self.item_count_set[r_type],
-                'records':[
+                'records': [
                     {
                         'object': r.record_obj,
                         'amount': r.amount
                     } for r in records]
             } for r_type, records in self.record_set.items()
         }
-        
+
         for r_type, amount in self.val_sum_set.items():
             if r_type not in result:
                 result[r_type] = {
-                    'sum': amount, 
-                    'item_count': self.item_count_set[r_type], 
-                    'records':[]
+                    'sum': amount,
+                    'item_count': self.item_count_set[r_type],
+                    'records': []
                 }
         return result
 
@@ -81,15 +82,16 @@ class RecordCollection:
     def items(self):
         return [{'name': k, 'amount': v} for k, v in self.val_sum_set.items()]
 
+
 class PersonalFinanceData:
     def __init__(self):
         self.income_records = RecordCollection()
         self.outcome_records = RecordCollection()
 
-    def addIncomeRecord(self, record, skip_finance_type = []):
+    def addIncomeRecord(self, record, skip_finance_type=[]):
         self.income_records.addRecord(record, skip_finance_type)
 
-    def addOutcomeRecord(self, record, skip_finance_type =[]):
+    def addOutcomeRecord(self, record, skip_finance_type=[]):
         self.outcome_records.addRecord(record, skip_finance_type)
 
     # when we don't have finance detail record. Use it to set summary
@@ -99,7 +101,8 @@ class PersonalFinanceData:
     # when we don't have finance detail record. Use it to set summary
     def setOutcomeSummary(self, summary):
         self.outcome_records.setSummary(summary)
-    
+
+
 def loadFinanceSummary(root_folder):
     data = {}
     income_category = None
@@ -112,16 +115,16 @@ def loadFinanceSummary(root_folder):
                     _ = int(line[0])
                 except ValueError:
                     income_category = line[4:10]
-                    outcome_category = line[15:25]
+                    outcome_category = line[14:24]
                     continue
-            
+
                 name = line[1]
-                income_list = line[4:10]
-                outcome_list = line[15:25]
-                
+                income_list = [int(v) for v in line[4:10]]
+                outcome_list = [int(v) for v in line[14:24]]
+
                 person_data = PersonalFinanceData()
                 person_data.setIncomeSummary(
-                    {   
+                    {
                         income_category[idx]: income_list[idx] for idx in range(len(income_list))
                     }
                 )
@@ -134,7 +137,8 @@ def loadFinanceSummary(root_folder):
     finally:
         return data
 
-def getFinanceData(root_folder, name, skip_finance_type = []):
+
+def getFinanceData(root_folder, name, skip_finance_type=[]):
     finance_data = PersonalFinanceData()
 
     try:
@@ -157,14 +161,14 @@ def getFinanceData(root_folder, name, skip_finance_type = []):
                 if income:
                     value = int(income.replace(',', ''))
                     t = Record(date, record_type, record_obj,
-                                id_number, address, value)
+                               id_number, address, value)
                     finance_data.addIncomeRecord(t, skip_finance_type)
                 else:
                     value = int(outcome.replace(',', ''))
                     t = Record(date, record_type, record_obj,
-                                id_number, address, value)
+                               id_number, address, value)
                     finance_data.addOutcomeRecord(t, skip_finance_type)
-        return finance_data  
+        return finance_data
 
     except FileNotFoundError:
         return None
