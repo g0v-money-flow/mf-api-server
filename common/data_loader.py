@@ -169,14 +169,16 @@ def load_data(source):
             if candidate is not None:
                 candidate.set_result(node['num_of_vote'], node['rate_of_vote'])
 
+    finance_summary = finance_data.loadFinanceSummary(root_folder)
     for region in election.region_db.values():
-        for num, cand in region.candidates.items():
+        for _, cand in region.candidates.items():
             cand_name = cand.person.name
-            try:
-                data = finance_data.getFinanceData(root_folder, cand_name, skip_finance_type)
+            data = finance_data.getFinanceData(root_folder, cand_name, skip_finance_type)
+            if data is not None:
                 cand.set_finance_data(data)
-            except FileNotFoundError:
-                pass
+            
+            if cand_name in finance_summary:
+                cand.set_finance_data(finance_summary[cand_name])
 
     # clean invalid region
     delete_region = [region for region in election.region_db.values() if len(region.candidates) == 0]
