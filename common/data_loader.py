@@ -32,7 +32,13 @@ def get_candidate(name):
                     return cand
     return None
 
-def load_data(root_folder, base_file, party_file, cand_file, tks_file):
+def load_data(source):
+    root_folder = source['root_folder']
+    base_file = source['base_file']
+    party_file = source['party_file']
+    cand_file = source['cand_file']
+    tks_file = source['tks_file']
+
     election = Election()
     with open(base_file, 'r') as base_file:
         reader = csv.reader(base_file)
@@ -157,11 +163,11 @@ def load_data(root_folder, base_file, party_file, cand_file, tks_file):
 data_sources = findAllData()
 data = {
     'legislator': {
-        source['year']: load_data(source['root_folder'], source['base_file'], source['party_file'], source['cand_file'], source['tks_file'])
+        source['year']: load_data(source)
             for source in data_sources if source['name'] == 'legislator'
     },
     'president': {
-        source['year']: load_data(source['root_folder'],source['base_file'], source['party_file'], source['cand_file'], source['tks_file'])
+        source['year']: load_data(source)
             for source in data_sources if source['name'] == 'president'
     }
 }

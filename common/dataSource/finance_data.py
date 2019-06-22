@@ -25,7 +25,6 @@ class RecordCollection:
         SKIP_TYPE = [
             '個人捐贈收入', 
             '匿名捐贈', 
-            '其他收入', 
             '雜支支出', 
             '交通旅運支出',
             '返還支出',
@@ -132,7 +131,7 @@ def getFinanceData(root_folder, name):
     return finance_data
 
 
-if __name__ == '__main__':
-    data = getFinanceData('黃秀芳')
-    for k in data.outcome_records.record_set.keys():
-        print(k)
+# if __name__ == '__main__':
+#     data = getFinanceData('黃秀芳')
+#     for k in data.outcome_records.record_set.keys():
+#         print(k)
