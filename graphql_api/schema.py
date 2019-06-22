@@ -76,7 +76,8 @@ class Query(ObjectType):
 
     def resolve_all(self, info):
         return [
-            get_election('legislator', '2016')
+            get_election('legislator', '2016'),
+            get_election('president', '2016')
         ]
     
     def resolve_candidate(self, info, name):
