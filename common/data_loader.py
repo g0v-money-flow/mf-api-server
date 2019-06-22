@@ -35,6 +35,11 @@ def get_candidate(name):
 PRESIDENT_SKIP_FINANCE_TYPE = [
     '個人捐贈收入', 
     '匿名捐贈', 
+    '集會支出',
+    '宣傳支出',
+    '人事費用支出',
+    '租用競選辦事處支',
+    '租用宣傳車輛支出',
     '雜支支出', 
     '交通旅運支出',
     '返還支出',
@@ -54,7 +59,7 @@ def load_data(source):
     tks_file = source['tks_file']
     election_type = source['name']
     skip_finance_type = []
-    
+
     if election_type == 'legislator':
         skip_finance_type = LEGISLATOR_SKIP_FINANCE_TYPE
     elif election_type == 'president':
