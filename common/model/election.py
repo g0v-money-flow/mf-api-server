@@ -1,7 +1,7 @@
 class Election:
-    def __init__(self):
-        self.e_type = 'legislator'
-        self.year = 2016
+    def __init__(self, e_type, year):
+        self.e_type = e_type
+        self.year = int(year)
         self.city_db = {}
         self.region_db = {}
         self.party_db = {}

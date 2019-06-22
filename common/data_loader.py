@@ -63,6 +63,7 @@ def load_data(source):
     cand_file = source['cand_file']
     tks_file = source['tks_file']
     election_type = source['name']
+    election_year = int(source['year'])
     skip_finance_type = []
 
     if election_type == 'legislator':
@@ -70,7 +71,7 @@ def load_data(source):
     elif election_type == 'president':
         skip_finance_type = PRESIDENT_SKIP_FINANCE_TYPE
 
-    election = Election()
+    election = Election(election_type, election_year)
     with open(base_file, 'r') as base_file:
         reader = csv.reader(base_file)
         for line in reader:
