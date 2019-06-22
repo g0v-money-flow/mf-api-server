@@ -1,6 +1,6 @@
 from graphene import ObjectType, String, Int, Boolean, Float, List, Field
 
-from common.data_loader import get_election, get_regions, get_candidate
+from common.data_loader import get_all_election, get_election, get_regions, get_candidate
 
 class FinanceCategoryItem(ObjectType):
     name = String()
@@ -75,10 +75,7 @@ class Query(ObjectType):
         return get_election(etype, str(year))
 
     def resolve_all(self, info):
-        return [
-            get_election('legislator', '2016'),
-            get_election('president', '2016')
-        ]
+        return get_all_election()
     
     def resolve_candidate(self, info, name):
         return get_candidate(name)

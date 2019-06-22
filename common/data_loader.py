@@ -9,6 +9,11 @@ from common.dataSource import finance_data
 from common.dataDiscover import findAllData
 
 
+def get_all_election():
+    return [
+        election for election in category.values() for category in data.values()
+    ]
+
 def get_election(e_type, e_year):
     if e_type not in data:
         return None
