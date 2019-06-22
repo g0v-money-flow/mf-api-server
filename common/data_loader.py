@@ -32,12 +32,33 @@ def get_candidate(name):
                     return cand
     return None
 
+PRESIDENT_SKIP_FINANCE_TYPE = [
+    '個人捐贈收入', 
+    '匿名捐贈', 
+    '雜支支出', 
+    '交通旅運支出',
+    '返還支出',
+    '繳庫支出'
+]
+
+LEGISLATOR_SKIP_FINANCE_TYPE = [
+    '個人捐贈收入', 
+    '匿名捐贈'
+]
+
 def load_data(source):
     root_folder = source['root_folder']
     base_file = source['base_file']
     party_file = source['party_file']
     cand_file = source['cand_file']
     tks_file = source['tks_file']
+    election_type = source['name']
+    skip_finance_type = []
+    
+    if election_type == 'legislator':
+        skip_finance_type = LEGISLATOR_SKIP_FINANCE_TYPE
+    elif election_type == 'president':
+        skip_finance_type = PRESIDENT_SKIP_FINANCE_TYPE
 
     election = Election()
     with open(base_file, 'r') as base_file:
@@ -139,7 +160,7 @@ def load_data(source):
         for num, cand in region.candidates.items():
             cand_name = cand.person.name
             try:
-                data = finance_data.getFinanceData(root_folder, cand_name)
+                data = finance_data.getFinanceData(root_folder, cand_name, skip_finance_type)
                 cand.set_finance_data(data)
             except FileNotFoundError:
                 pass

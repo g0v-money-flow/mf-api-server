@@ -19,18 +19,10 @@ class RecordCollection:
         self.val_sum_set = {}
         self.val_sum = 0
 
-    def addRecord(self, record):
+    def addRecord(self, record, skip_finance_type = []):
         record_type = record.record_type
 
-        SKIP_TYPE = [
-            '個人捐贈收入', 
-            '匿名捐贈', 
-            '雜支支出', 
-            '交通旅運支出',
-            '返還支出',
-            '繳庫支出'
-        ]
-        if record_type not in SKIP_TYPE:
+        if record_type not in skip_finance_type:
             if record_type not in self.record_set:
                 self.record_set[record_type] = []
             self.record_set[record_type].append(record)
@@ -89,17 +81,17 @@ class PersonalFinanceData:
         self.income_records = RecordCollection()
         self.outcome_records = RecordCollection()
 
-    def addIncomeRecord(self, record):
-        self.income_records.addRecord(record)
+    def addIncomeRecord(self, record, skip_finance_type = []):
+        self.income_records.addRecord(record, skip_finance_type)
 
-    def addOutcomeRecord(self, record):
-        self.outcome_records.addRecord(record)
+    def addOutcomeRecord(self, record, skip_finance_type =[]):
+        self.outcome_records.addRecord(record, skip_finance_type)
 
     def __str__(self):
         return 'income:{}, outcome:{}'.format(self.income_records.getValueSum(), self.outcome_records.getValueSum())
 
 
-def getFinanceData(root_folder, name):
+def getFinanceData(root_folder, name, skip_finance_type = []):
     finance_data = PersonalFinanceData()
     with open('{}/finance_data/{}.csv'.format(root_folder, name), 'r') as base_file:
         reader = csv.reader(base_file)
@@ -121,12 +113,12 @@ def getFinanceData(root_folder, name):
                 value = int(income.replace(',', ''))
                 t = Record(date, record_type, record_obj,
                            id_number, address, value)
-                finance_data.addIncomeRecord(t)
+                finance_data.addIncomeRecord(t, skip_finance_type)
             else:
                 value = int(outcome.replace(',', ''))
                 t = Record(date, record_type, record_obj,
                            id_number, address, value)
-                finance_data.addOutcomeRecord(t)
+                finance_data.addOutcomeRecord(t, skip_finance_type)
 
     return finance_data
 
