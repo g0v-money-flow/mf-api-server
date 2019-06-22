@@ -10,9 +10,11 @@ from common.dataDiscover import findAllData
 
 
 def get_all_election():
-    return [
-        election for election in category.values() for category in data.values()
-    ]
+    res = []
+    for category in data.values():
+        for election in category.values():
+            res.append(election)
+    return res
 
 def get_election(e_type, e_year):
     if e_type not in data:
