@@ -103,7 +103,7 @@ def test_show_a_candidate(client):
     # get candidate id
     rv = client.get('/presidentElection/2016/constituencies/00-000-00-000-0000')
     jData = json.loads(rv.data)['data']
-    candidate_id = jData['candidates'][0]['id']
+    candidate_id = jData['candidates'][1]['id']
 
     rv = client.get('/presidentElection/2016/candidates/' + str(candidate_id))
     jData = json.loads(rv.data)['data']

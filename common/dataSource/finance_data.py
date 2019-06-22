@@ -15,15 +15,31 @@ class Record:
 class RecordCollection:
     def __init__(self):
         self.record_set = {}
+        self.item_count_set = {}
         self.val_sum_set = {}
         self.val_sum = 0
 
     def addRecord(self, record):
         record_type = record.record_type
 
-        if record_type not in self.record_set:
-            self.record_set[record_type] = []
-        self.record_set[record_type].append(record)
+        SKIP_TYPE = [
+            '個人捐贈收入', 
+            '匿名捐贈', 
+            '其他收入', 
+            '雜支支出', 
+            '交通旅運支出',
+            '返還支出',
+            '繳庫支出'
+        ]
+        if record_type not in SKIP_TYPE:
+            if record_type not in self.record_set:
+                self.record_set[record_type] = []
+            self.record_set[record_type].append(record)
+
+        if record_type not in self.item_count_set:
+            self.item_count_set[record_type] = 1
+        else:
+            self.item_count_set[record_type] += 1
 
         if record_type not in self.val_sum_set:
             self.val_sum_set[record_type] = 0
@@ -31,16 +47,26 @@ class RecordCollection:
         self.val_sum += record.amount
 
     def getRecords(self):
-        return {
+        result = {
             r_type:{
                 'sum': self.val_sum_set[r_type],
+                'item_count': self.item_count_set[r_type],
                 'records':[
                     {
                         'object': r.record_obj,
                         'amount': r.amount
                     } for r in records]
-            }
-        for r_type, records in self.record_set.items()}
+            } for r_type, records in self.record_set.items()
+        }
+        
+        for r_type, amount in self.val_sum_set.items():
+            if r_type not in result:
+                result[r_type] = {
+                    'sum': amount, 
+                    'item_count': self.item_count_set[r_type], 
+                    'records':[]
+                }
+        return result
 
     def getValueSumByType(self, record_type):
         if record_type not in self.val_sum_set:
