@@ -100,9 +100,9 @@ class PersonalFinanceData:
         return 'income:{}, outcome:{}'.format(self.income_records.getValueSum(), self.outcome_records.getValueSum())
 
 
-def getFinanceData(name):
+def getFinanceData(root_folder, name):
     finance_data = PersonalFinanceData()
-    with open('common/dataSource/rawData/legislator2016/finance_data/{}.csv'.format(name), 'r') as base_file:
+    with open('{}/finance_data/{}.csv'.format(root_folder, name), 'r') as base_file:
         reader = csv.reader(base_file)
         for line in reader:
             try:

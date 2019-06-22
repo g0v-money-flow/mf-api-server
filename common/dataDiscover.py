@@ -14,7 +14,8 @@ def findDataSource(folderName):
 
     res = {
         'name': name,
-        'year': year
+        'year': year,
+        'root_folder': root
     }
     for f in os.listdir(root):
         if re.match('^elcand.+csv$', f):

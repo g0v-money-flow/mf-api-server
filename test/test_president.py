@@ -117,6 +117,6 @@ def test_show_a_candidate(client):
     assert 'num_of_vote' in jData
     assert 'rate_of_vote' in jData
     assert 'finance_data' in jData
-    # assert 'income' in jData['finance_data']
-    # assert 'outcome' in jData['finance_data']
+    assert 'income' in jData['finance_data']
+    assert 'outcome' in jData['finance_data']
 
