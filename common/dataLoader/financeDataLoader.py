@@ -1,6 +1,4 @@
-#!/usr/local/bin/python3
 import csv
-
 
 class Record:
     def __init__(self, date, record_type, record_obj, id_number, address, amount):
@@ -173,7 +171,3 @@ def getFinanceData(root_folder, name, skip_finance_type=[]):
     except FileNotFoundError:
         return None
 
-# if __name__ == '__main__':
-#     data = getFinanceData('黃秀芳')
-#     for k in data.outcome_records.record_set.keys():
-#         print(k)

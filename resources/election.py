@@ -1,5 +1,5 @@
 from flask_restful import Resource
-from common.data_loader import data
+from common.dataLoader.dataLoader import data
 from conf import CONF
 
 class ElectionList(Resource):

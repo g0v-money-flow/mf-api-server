@@ -1,6 +1,6 @@
 from graphene import ObjectType, String, Int, Boolean, Float, List, Field
 
-from common.data_loader import get_all_election, get_election, get_regions, get_candidate
+from common.dataLoader.dataLoader import get_all_election, get_election, get_regions, get_candidate
 
 class FinanceCategoryItem(ObjectType):
     name = String()

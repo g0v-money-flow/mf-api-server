@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import abort
-from common.data_loader import data, get_election
+from common.dataLoader.dataLoader import data, get_election
 from conf import CONF
 
 class Constituency(Resource):

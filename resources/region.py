@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import abort
-from common.data_loader import data, get_election, get_regions
+from common.dataLoader.dataLoader import data, get_election, get_regions
 from conf import CONF
 
 class RegionList(Resource):

@@ -5,8 +5,8 @@ from common.model.party import Party
 from common.model.person import Person 
 from common.model.candidate import Candidate
 from common.model.election import Election
-from common.dataSource import finance_data
-from common.dataDiscover import findAllData
+from common.dataLoader import financeDataLoader
+from common.dataLoader.dataDiscover import findAllData
 
 
 def get_all_election():
@@ -169,11 +169,11 @@ def load_data(source):
             if candidate is not None:
                 candidate.set_result(node['num_of_vote'], node['rate_of_vote'])
 
-    finance_summary = finance_data.loadFinanceSummary(root_folder)
+    finance_summary = financeDataLoader.loadFinanceSummary(root_folder)
     for region in election.region_db.values():
         for _, cand in region.candidates.items():
             cand_name = cand.person.name
-            data = finance_data.getFinanceData(root_folder, cand_name, skip_finance_type)
+            data = financeDataLoader.getFinanceData(root_folder, cand_name, skip_finance_type)
             if data is not None:
                 cand.set_finance_data(data)
             

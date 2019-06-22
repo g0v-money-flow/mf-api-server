@@ -1,6 +1,6 @@
 from flask_restful import Resource
 from flask import abort
-from common.data_loader import data
+from common.dataLoader.dataLoader import data
 
 class Candidate(Resource):
     def get(self, electionName, year, id):
