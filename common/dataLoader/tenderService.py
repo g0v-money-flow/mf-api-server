@@ -59,10 +59,9 @@ class TenderService():
                 for company_name in self.tracking_companies.keys():
                     self.__mergeDataToRepositoryByCompanyName(
                         company_name, data)
-                    time.sleep(1)
-
                 self.remote_source_last_update = target_date
                 target_date += timedelta(days=1)
+                time.sleep(1)
 
         self.keepRepository()
         print('sync finished')
