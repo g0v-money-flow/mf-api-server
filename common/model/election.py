@@ -26,6 +26,9 @@ class Election:
         else:
             return None
 
+    def get_candidate_list(self):
+        return self.cand_db.values()
+
     def get_candidate(self, id):
         if id in self.cand_db:
             return self.cand_db[id]

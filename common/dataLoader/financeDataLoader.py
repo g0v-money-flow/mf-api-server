@@ -4,7 +4,7 @@ class Record:
     def __init__(self, date, record_type, record_obj, id_number, address, amount):
         self.date = date
         self.record_type = record_type
-        self.record_obj = record_obj
+        self.record_obj = record_obj  # ex. company name or person name
         self.id_number = id_number
         self.address = address
         self.amount = amount

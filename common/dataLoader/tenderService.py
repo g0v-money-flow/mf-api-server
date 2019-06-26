@@ -4,6 +4,7 @@ import time
 import pytz
 from common.dataLoader import tenderLoader
 
+
 class TenderService():
     def __init__(self, storage_file):
         self.storage_file = storage_file
@@ -19,9 +20,8 @@ class TenderService():
         if company in self.tracking_companies:
             return
 
+        print('add tracking company', company)
         self.tracking_companies[company] = True
-        if self.remote_source_last_update is not None:
-            self.loadCompany(company)
 
     def trySyncRemoteData(self):
         if len(self.tracking_companies) == 0:
@@ -34,29 +34,41 @@ class TenderService():
         if self.remote_source_last_update:
             target_date = self.remote_source_last_update + timedelta(days=1)
         else:
-            # begin_date = datetime(2010, 1, 4, tzinfo = pytz.timezone('Asia/Taipei'))
-            target_date = datetime(2019, 6, 10, tzinfo = pytz.timezone('Asia/Taipei'))
-
-        if latest_update < target_date:
-            return
+            target_date = datetime(
+                2010, 1, 4, tzinfo=pytz.timezone('Asia/Taipei'))
+            # target_date = datetime(2019, 6, 10, tzinfo = pytz.timezone('Asia/Taipei'))
 
         print('start to sync remote data')
-        while target_date <= latest_update:
-            print('fetch data {}'.format(target_date.strftime('%Y%m%d')))
-            data = tenderLoader.fetchTendersByDate(target_date)
+        if self.remote_source_last_update:
+            nodata_company = [
+                company for company in self.tracking_companies.keys() if self.getCompanyData(company) is None
+            ]
+            if len(nodata_company) > 3000:
+                # reset target_date for re-fetching all tender data
+                target_date = datetime(
+                    2010, 1, 4, tzinfo=pytz.timezone('Asia/Taipei'))
+            else:
+                for company in nodata_company:
+                    self.loadCompany(company)
 
-            for company_name in self.tracking_companies.keys():
-                self.__mergeDataToRepositoryByCompanyName(company_name, data)
-                time.sleep(5)
+        if latest_update >= target_date:
+            while target_date <= latest_update:
+                print('fetch data {}'.format(target_date.strftime('%Y%m%d')))
+                data = tenderLoader.fetchTendersByDate(target_date)
 
-            self.remote_source_last_update = target_date
-            target_date += timedelta(days=1)
+                for company_name in self.tracking_companies.keys():
+                    self.__mergeDataToRepositoryByCompanyName(
+                        company_name, data)
+                    time.sleep(1)
+
+                self.remote_source_last_update = target_date
+                target_date += timedelta(days=1)
+
+        self.keepRepository()
         print('sync finished')
 
     def loadCompany(self, company_name):
-        if self.getCompanyData(company_name) is not None:
-            return
-
+        print('try to fetch remote tender records ', company_name)
         data = tenderLoader.fetchTendersByCompanyName(company_name)
         self.__mergeDataToRepositoryByCompanyName(company_name, data)
 
@@ -83,7 +95,6 @@ class TenderService():
                     if company_name in d['winner']:
                         company['records'].append(d)
                 self.repository[company_name] = company
-                
 
     def getCompanyData(self, company_name):
         if company_name in self.repository:
@@ -91,9 +102,8 @@ class TenderService():
         else:
             return None
 
-    def stop(self):
+    def keepRepository(self):
         if self.remote_source_last_update:
             self.repository['last_update'] = self.remote_source_last_update.isoformat(
             )
         tenderLoader.exportTenderRepository(self.storage_file, self.repository)
-

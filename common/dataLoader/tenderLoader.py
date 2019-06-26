@@ -64,7 +64,6 @@ def fetchTendersByCompanyName(name):
             next_page = parseTendersPage(json_body, context)
         else:
             return None
-        time.sleep(5)
 
     delete_target = []
     for idx in range(len(context)):
