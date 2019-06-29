@@ -1,3 +1,5 @@
+from conf import CONF
+from .election import Election
 from .region import Region
 from .party import Party
 from .person import Person
@@ -9,6 +11,7 @@ class Candidate:
 
     # object member
     id: int
+    election: Election
     region: Region
     party: Party
     person: Person
@@ -23,8 +26,9 @@ class Candidate:
         tmp = cls.id_counter
         return tmp
 
-    def __init__(self, region, person, party, is_elected):
+    def __init__(self, election, region, person, party, is_elected):
         self.id = Candidate.generateId()
+        self.election = election
         self.region = region
         self.person = person
         self.party = party
@@ -46,6 +50,10 @@ class Candidate:
             return None
         else:
             return self.vice.name
+
+    @property
+    def detail_link(self):
+        return CONF['uri_prefix'] + '/{}Election/{}/constituencies/{}'.format(self.election.e_type, self.election.year, self.id)
 
     def set_vice_candidate(self, person):
         self.vice = person

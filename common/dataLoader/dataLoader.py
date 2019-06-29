@@ -141,9 +141,10 @@ def load_data(source):
             else:
                 node['elected'] = False
 
-            candidate = Candidate(region, node['person'], node['party'], node['elected'])
+            candidate = Candidate(election, region, node['person'], node['party'], node['elected'])
             region.put_candidate(node['num'], candidate)
             election.cand_db[candidate.id] = candidate
+            
             
         for line in vice_list:        
             node = {}

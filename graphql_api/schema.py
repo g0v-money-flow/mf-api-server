@@ -32,6 +32,7 @@ class Candidate(ObjectType):
     rate_of_vote = Float()
     finance = Field(Finance)
     constituency = Field(lambda: Constituency)
+    detail_link = String()
 
     def resolve_finance(parent, info):
         return parent.finance_data
