@@ -62,6 +62,8 @@ class Region(ObjectType):
 
 class Election(ObjectType):
     name = String()
+    e_type = String()
+    year = Int()
     regions = List(Region)
 
     def resolve_regions(parent, info):
