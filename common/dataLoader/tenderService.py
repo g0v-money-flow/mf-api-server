@@ -35,7 +35,7 @@ class TenderService():
             target_date = self.remote_source_last_update + timedelta(days=1)
         else:
             target_date = datetime(
-                2010, 1, 4, tzinfo=pytz.timezone('Asia/Taipei'))
+                2014, 1, 1, tzinfo=pytz.timezone('Asia/Taipei'))
             # target_date = datetime(2019, 6, 10, tzinfo = pytz.timezone('Asia/Taipei'))
 
         print('start to sync remote data')
