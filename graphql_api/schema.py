@@ -33,6 +33,7 @@ class Candidate(ObjectType):
     finance = Field(Finance)
     constituency = Field(lambda: Constituency)
     detail_link = String()
+    id = Int()
 
     def resolve_finance(parent, info):
         return parent.finance_data
