@@ -4,12 +4,18 @@ from common.dataLoader.tenderService import TenderService
 from common.dataLoader.dataLoader import data
 
 class TenderServiceRunner():
-    def __init__(self, tender_service):
-        self.tender_service = tender_service
+    g_tender_runner = None
+
+    def __init__(self, tender_file):
+        self.tender_service = TenderService(tender_file)
         self.stop = False
         self.auto_sync_thread = None
 
+    def getTenderService(self):
+        return self.tender_service
+
     def autoFetchTenderData(self):
+        time.sleep(60)
         print('start tenderServiceRunner')
         while not self.stop:
             self.syncData()
@@ -39,3 +45,12 @@ class TenderServiceRunner():
 
     def stopAutoSync(self):
         self.stop = True
+
+
+def initTenderService(tender_file):
+    if TenderServiceRunner.g_tender_runner is None:
+        TenderServiceRunner.g_tender_runner = TenderServiceRunner(tender_file)
+        TenderServiceRunner.g_tender_runner.startAutoSync()
+
+def getTenderService():
+    return TenderServiceRunner.g_tender_runner.getTenderService()

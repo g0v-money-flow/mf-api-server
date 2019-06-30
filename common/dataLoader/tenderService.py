@@ -4,7 +4,6 @@ import time
 import pytz
 from common.dataLoader import tenderLoader
 
-
 class TenderService():
     def __init__(self, storage_file):
         self.storage_file = storage_file
@@ -20,36 +19,36 @@ class TenderService():
         if company in self.tracking_companies:
             return
 
-        print('add tracking company', company)
+        # print('add tracking company', company)
         self.tracking_companies[company] = True
 
     def trySyncRemoteData(self):
         if len(self.tracking_companies) == 0:
             return
 
-        latest_update = tenderLoader.getLatestUpdateTime()
+        # latest_update = tenderLoader.getLatestUpdateTime()
+        latest_update = datetime(
+            2018, 4, 30, tzinfo=pytz.timezone('Asia/Taipei'))
         if latest_update is None:
             return
 
         if self.remote_source_last_update:
             target_date = self.remote_source_last_update + timedelta(days=1)
         else:
-            target_date = datetime(
-                2014, 1, 1, tzinfo=pytz.timezone('Asia/Taipei'))
-            # target_date = datetime(2019, 6, 10, tzinfo = pytz.timezone('Asia/Taipei'))
+            self._resetLastUpdateDate()
+            target_date = self.remote_source_last_update
 
         print('start to sync remote data')
-        if self.remote_source_last_update:
-            nodata_company = [
-                company for company in self.tracking_companies.keys() if self.getCompanyData(company) is None
-            ]
-            if len(nodata_company) > 3000:
-                # reset target_date for re-fetching all tender data
-                target_date = datetime(
-                    2010, 1, 4, tzinfo=pytz.timezone('Asia/Taipei'))
-            else:
-                for company in nodata_company:
-                    self.loadCompany(company)
+        nodata_company = [
+            company for company in self.tracking_companies.keys() if self.getCompanyData(company) is None
+        ]
+        if len(nodata_company) > 3000:
+            # reset target_date for re-fetching all tender data
+            self._resetLastUpdateDate()
+            target_date = self.remote_source_last_update
+        else:
+            for company in nodata_company:
+                self.loadCompany(company)
 
         if latest_update >= target_date:
             while target_date <= latest_update:
@@ -106,3 +105,8 @@ class TenderService():
             self.repository['last_update'] = self.remote_source_last_update.isoformat(
             )
         tenderLoader.exportTenderRepository(self.storage_file, self.repository)
+
+    def _resetLastUpdateDate(self):
+        self.remote_source_last_update = datetime(
+            2018, 4, 1, tzinfo=pytz.timezone('Asia/Taipei'))
+
