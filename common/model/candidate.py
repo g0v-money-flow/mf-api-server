@@ -53,7 +53,7 @@ class Candidate:
 
     @property
     def detail_link(self):
-        return CONF['uri_prefix'] + '/{}Election/{}/constituencies/{}'.format(self.election.e_type, self.election.year, self.id)
+        return CONF['uri_prefix'] + '/{}Election/{}/candidates/{}'.format(self.election.e_type, self.election.year, self.id)
 
     def set_vice_candidate(self, person):
         self.vice = person
