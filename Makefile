@@ -2,10 +2,10 @@ FLASK_APP=app.py
 FLASK_ENV=production
 
 all: install
-	python3 -m flask run --no-debugger --no-reload
+	python3.7 -m flask run --no-debugger --no-reload
 
 install:
-	pip install -r requirements.txt
+	python3.7 -m pip install -r requirements.txt
 
 .PHONY: test
 test: 
