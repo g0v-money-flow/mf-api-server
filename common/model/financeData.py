@@ -43,7 +43,6 @@ class RecordCollection:
         result = {
             r_type: {
                 'sum': self.val_sum_set[r_type],
-                'item_count': self.item_count_set[r_type],
                 'records': [
                     {
                         'object': r.record_obj,
@@ -54,10 +53,14 @@ class RecordCollection:
 
         for r_type, amount in self.val_sum_set.items():
             if r_type not in result:
+                item_count = self.item_count_set[r_type]
+                average = amount/item_count if amount > 0 else 0
                 result[r_type] = {
                     'sum': amount,
-                    'item_count': self.item_count_set[r_type],
-                    'records': []
+                    'records': [{
+                        'object': '共{}筆,平均每筆{}元'.format(item_count, average),
+                        'amount': amount
+                    }]
                 }
         return result
 
