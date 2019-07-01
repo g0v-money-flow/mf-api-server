@@ -1,5 +1,6 @@
 import asyncio
 from datetime import datetime, timedelta
+import iso8601
 import time
 import pytz
 from common.dataLoader import tenderLoader
@@ -10,7 +11,7 @@ class TenderService():
         self.repository = tenderLoader.loadTenderRepository(self.storage_file)
         self.tracking_companies = {}
         if 'last_update' in self.repository:
-            self.remote_source_last_update = datetime.fromisoformat(
+            self.remote_source_last_update = iso8601.parse_date(
                 self.repository['last_update'])
         else:
             self.remote_source_last_update = None
