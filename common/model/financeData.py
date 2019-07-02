@@ -42,7 +42,7 @@ class RecordCollection:
         self.val_sum += record.amount
 
     def filterOutTop300Record(self):
-        self.record_list = self.record_list.sort(lambda r: r.amount)[-300:]
+        self.record_list = self.record_list.sort(key=lambda r: r.amount)[-300:]
 
     def getRecords(self):
         result = {}
