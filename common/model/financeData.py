@@ -92,6 +92,10 @@ class PersonalFinanceData:
     def addOutcomeRecord(self, record, skip_finance_type=[]):
         self.outcome_records.addRecord(record, skip_finance_type)
 
+    def executeDataPostProcessing(self):
+        self.income_records.filterOutTop300Record()
+        self.outcome_records.filterOutTop300Record()
+
     # when we don't have finance detail record. Use it to set summary
     def setIncomeSummary(self, summary):
         self.income_records.setSummary(summary)

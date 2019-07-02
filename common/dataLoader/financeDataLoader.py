@@ -66,6 +66,7 @@ def getFinanceData(root_folder, name, skip_finance_type=[]):
                     t = Record(date, record_type, record_obj,
                                id_number, address, value)
                     finance_data.addOutcomeRecord(t, skip_finance_type)
+        finance_data.executeDataPostProcessing()
         return finance_data
 
     except FileNotFoundError:
