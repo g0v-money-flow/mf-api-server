@@ -19,8 +19,7 @@ class Candidate(Resource):
         target = data[e_type][e_year].cand_db[id]
         finance_data = Candidate._gen_finance_detail_record(target)
         if finance_data:
-            tenders = Candidate._gen_tender_list(
-                finance_data['income']['營利事業捐贈收入']['records']) if '營利事業捐贈收入' in finance_data['income'] else []
+            tenders = Candidate._gen_tender_list(target.finance_data.income_records.company_set)
         else:
             tenders = []
 
@@ -52,11 +51,7 @@ class Candidate(Resource):
             }
 
     @classmethod
-    def _gen_tender_list(cls, income_records):
-        company_set = set()
-        for records in income_records:
-            company_set.add(records['object'])
-
+    def _gen_tender_list(cls, company_set):
         res = []
         for company_name in company_set:
             tenders = tenderServiceRunner.getTenderService().getCompanyData(company_name)

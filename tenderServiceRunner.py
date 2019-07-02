@@ -30,10 +30,8 @@ class TenderServiceRunner():
                 for candidate in election.get_candidate_list():
                     if candidate.finance_data is not None:
                         finance = candidate.finance_data
-                        if '營利事業捐贈收入' in finance.income_records.record_set:
-                            for record in finance.income_records.record_set['營利事業捐贈收入']:
-                                self.tender_service.addTrackingCompany(
-                                    record.record_obj)
+                        for company_name in finance.income_records.company_set:
+                            self.tender_service.addTrackingCompany(company_name)
 
         self.tender_service.trySyncRemoteData()
 

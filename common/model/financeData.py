@@ -10,7 +10,8 @@ class Record:
 
 class RecordCollection:
     def __init__(self):
-        self.record_set = {}
+        self.company_set = set()
+        self.record_list = []
         self.item_count_set = {}
         self.val_sum_set = {}
         self.val_sum = 0
@@ -24,10 +25,11 @@ class RecordCollection:
     def addRecord(self, record, skip_finance_type=[]):
         record_type = record.record_type
 
-        if record_type not in skip_finance_type:
-            if record_type not in self.record_set:
-                self.record_set[record_type] = []
-            self.record_set[record_type].append(record)
+        if record_type == '營利事業捐贈收入':
+            self.company_set.add(record.record_obj)
+        
+        # if record_type not in skip_finance_type:
+        self.record_list.append(record)
 
         if record_type not in self.item_count_set:
             self.item_count_set[record_type] = 1
@@ -39,30 +41,27 @@ class RecordCollection:
         self.val_sum_set[record_type] += record.amount
         self.val_sum += record.amount
 
-    def getRecords(self):
-        result = {
-            r_type: {
-                'sum': self.val_sum_set[r_type],
-                'records': [
-                    {
-                        'object': r.record_obj,
-                        'amount': r.amount
-                    } for r in records]
-            } for r_type, records in self.record_set.items()
-        }
+    def filterOutTop300Record(self):
+        self.record_list = self.record_list.sort(lambda r: r.amount)[-300:]
 
+    def getRecords(self):
+        result = {}
         for r_type, amount in self.val_sum_set.items():
-            if r_type not in result:
-                item_count = self.item_count_set[r_type]
-                average = amount/item_count if amount > 0 else 0
-                result[r_type] = {
-                    'sum': amount,
-                    'records': [{
-                        'object': '共{}筆,平均每筆{}元'.format(item_count, average),
-                        'amount': amount
-                    }]
-                }
-        return result
+            item_count = self.item_count_set[r_type]
+            result[r_type] = {
+                'amount': amount,
+                'item_count': item_count
+            }
+        
+        result['top300'] = [
+            {
+                'amount': record.amount, 
+                'object': record.record_obj,
+                'type': record.record_type
+            }
+            for record in self.record_list]
+
+        return result        
 
     def getValueSumByType(self, record_type):
         if record_type not in self.val_sum_set:
