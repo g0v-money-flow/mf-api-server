@@ -15,7 +15,7 @@ class TenderServiceRunner():
         return self.tender_service
 
     def autoFetchTenderData(self):
-        # time.sleep(60)
+        time.sleep(60)
         print('start tenderServiceRunner')
         while not self.stop:
             self.syncData()
