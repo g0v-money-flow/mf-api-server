@@ -15,10 +15,10 @@ def getLatestUpdateTime():
 def getWinningBidder(companies_name_key):
     result = []
     for company_name, info in companies_name_key.items():
-        is_getting = True
+        is_getting = False
         for val in info:
-            if val.find('未得標') >= 0:
-                is_getting = False
+            if val.find(':得標廠商') >= 0:
+                is_getting = True
 
         if is_getting:
             result.append(company_name)
@@ -48,7 +48,7 @@ def parseTendersPage(json_data, context):
             'title': brief['title'],
             'amount': 0,
             'winner': getWinningBidder(brief['companies']['name_key']),
-            'tender_api_url': record['tender_api_url']
+            'tender_api_url': 'http://pcc.g0v.ronny.tw/api/tender?unit_id={}&job_number={}'.format(record['unit_id'], record['job_number'])
         })
 
     return next_page
@@ -93,7 +93,10 @@ def fetchTendersByDate(date):
 
 
 def parseTenderDetailPage(company_name, body):
-    for record in body['records'][-1:]:
+    if 'records' not in body:
+        return None
+
+    for record in body['records'][::-1]:
         if 'detail' in record:
             for key, val in record['detail'].items():
                 if val == company_name:
@@ -102,9 +105,17 @@ def parseTenderDetailPage(company_name, body):
 
                     amount_key = ':'.join(key.split(':')[0:3]+['決標金額'])
                     if amount_key in record['detail']:
+                        date_str = record['detail']['決標資料:決標日期']
+                        date_arg = date_str.split('/')
+                        date_arg[0] = str(int(date_arg[0]) + 1911)
                         return {
                             'amount': int(record['detail'][amount_key][:-1].replace(',', '')),
-                            'date': record['detail']['決標資料:決標日期']
+                            'date': int(''.join(date_arg))
+                        }
+                    else:
+                        return {
+                            'amount': 0,
+                            'date': 0
                         }
     return None
 
@@ -134,7 +145,7 @@ def loadTenderRepository(filename):
 
 
 if __name__ == '__main__':
-    url = 'http://pcc.g0v.ronny.tw/api/tender?unit_id=3.13.50&job_number=AGC0755002'
+    url = 'http://pcc.g0v.ronny.tw/api/tender?unit_id=3.13.50&job_number=Q6B07D051'
 
-    context = fetchTenderAmountAndDate('洋盟海運承攬運送股份有限公司', url)
+    context = fetchTenderAmountAndDate('中鼎化工股份有限公司', url)
     print(context)

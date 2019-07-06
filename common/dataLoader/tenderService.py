@@ -29,7 +29,7 @@ class TenderService():
 
         # latest_update = tenderLoader.getLatestUpdateTime()
         latest_update = datetime(
-            2018, 4, 30, tzinfo=pytz.timezone('Asia/Taipei'))
+            2018, 8, 30, tzinfo=pytz.timezone('Asia/Taipei'))
         if latest_update is None:
             return
 
@@ -83,7 +83,11 @@ class TenderService():
                 last_update = company['max_date']
                 for d in data:
                     if company_name in d['winner'] and d['date'] > last_update:
-                        del d['winner']
+                        detail = tenderLoader.fetchTenderAmountAndDate(company_name, d['tender_api_url'])
+                        if detail == None:
+                            print(company_name, d['tender_api_url'])
+                        d['decisionDate'] = detail['date']
+                        d['amount'] = detail['amount']
                         company['records'].append(d)
                 company['max_date'] = max_date
             else:
@@ -93,7 +97,11 @@ class TenderService():
                 }
                 for d in data:
                     if company_name in d['winner']:
-                        del d['winner']
+                        detail = tenderLoader.fetchTenderAmountAndDate(company_name, d['tender_api_url'])
+                        if detail == None:
+                            print(company_name, d['tender_api_url'])
+                        d['decisionDate'] = detail['date']
+                        d['amount'] = detail['amount']
                         company['records'].append(d)
                 self.repository[company_name] = company
 
@@ -111,5 +119,5 @@ class TenderService():
 
     def _resetLastUpdateDate(self):
         self.remote_source_last_update = datetime(
-            2016, 1, 1, tzinfo=pytz.timezone('Asia/Taipei'))
+            2017, 8, 1, tzinfo=pytz.timezone('Asia/Taipei'))
 

@@ -1,3 +1,4 @@
+import functools
 from flask_restful import Resource
 from flask import abort
 from common.dataLoader.dataLoader import data
@@ -59,7 +60,7 @@ class Candidate(Resource):
             if tenders is not None and len(tenders) > 0:
                 res.append({
                     'name': company_name,
-                    'total_amount': 0,
+                    'total_amount': functools.reduce(lambda sum, r: sum + r['amount'], tenders, 0),
                     'item': tenders
                 })
         return res
