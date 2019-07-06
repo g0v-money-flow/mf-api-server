@@ -27,9 +27,9 @@ class TenderService():
         if len(self.tracking_companies) == 0:
             return
 
-        # latest_update = tenderLoader.getLatestUpdateTime()
-        latest_update = datetime(
-            2018, 8, 30, tzinfo=pytz.timezone('Asia/Taipei'))
+        latest_update = tenderLoader.getLatestUpdateTime()
+        # latest_update = datetime(
+            # 2018, 8, 30, tzinfo=pytz.timezone('Asia/Taipei'))
         if latest_update is None:
             return
 
@@ -119,5 +119,5 @@ class TenderService():
 
     def _resetLastUpdateDate(self):
         self.remote_source_last_update = datetime(
-            2017, 8, 1, tzinfo=pytz.timezone('Asia/Taipei'))
+            2016, 1, 1, tzinfo=pytz.timezone('Asia/Taipei'))
 
