@@ -46,6 +46,7 @@ def parseTendersPage(json_data, context):
             'file_name': record['filename'],
             'unit_name': record['unit_name'],
             'title': brief['title'],
+            'amount': 0,
             'winner': getWinningBidder(brief['companies']['name_key'])
         })
 

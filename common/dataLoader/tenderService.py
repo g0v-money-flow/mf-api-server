@@ -83,6 +83,7 @@ class TenderService():
                 last_update = company['max_date']
                 for d in data:
                     if company_name in d['winner'] and d['date'] > last_update:
+                        del d['winner']
                         company['records'].append(d)
                 company['max_date'] = max_date
             else:
@@ -92,6 +93,7 @@ class TenderService():
                 }
                 for d in data:
                     if company_name in d['winner']:
+                        del d['winner']
                         company['records'].append(d)
                 self.repository[company_name] = company
 

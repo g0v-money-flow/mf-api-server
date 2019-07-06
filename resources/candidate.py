@@ -57,5 +57,9 @@ class Candidate(Resource):
         for company_name in company_set:
             tenders = tenderServiceRunner.getTenderService().getCompanyData(company_name)
             if tenders is not None:
-                res.extend(tenders)
+                res.append({
+                    'name': company_name,
+                    'total_amount': 0,
+                    'item': tenders
+                })
         return res
