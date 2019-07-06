@@ -1,27 +1,41 @@
 from graphene import ObjectType, String, Int, Boolean, Float, List, Field
-
 from common.dataLoader.dataLoader import get_all_election, get_election, get_regions, get_candidate
+from common.model.financeData import INCOME_CATEGORY, OUTCOME_CATEGORY
+
 
 class FinanceCategoryItem(ObjectType):
     name = String()
     amount = Int()
 
-class FinanceItem(ObjectType):
+
+class FinanceOutcomeItem(ObjectType):
     total = Int()
     items = List(FinanceCategoryItem)
 
     def resolve_items(parent, info):
-        return parent.items
+        records = parent.getRecords(OUTCOME_CATEGORY)
+        return [records[category] for category in OUTCOME_CATEGORY]
+
+
+class FinanceIncomeItem(ObjectType):
+    total = Int()
+    items = List(FinanceCategoryItem)
+
+    def resolve_items(parent, info):
+        records = parent.getRecords(INCOME_CATEGORY)
+        return [records[category] for category in INCOME_CATEGORY]
+
 
 class Finance(ObjectType):
-    income = Field(FinanceItem)
-    outcome = Field(FinanceItem)
+    income = Field(FinanceIncomeItem)
+    outcome = Field(FinanceOutcomeItem)
 
     def resolve_income(parent, info):
         return parent.income_records
 
     def resolve_outcome(parent, info):
         return parent.outcome_records
+
 
 class Candidate(ObjectType):
     name = String()
@@ -46,6 +60,7 @@ class Candidate(ObjectType):
             'instance': parent.region
         }
 
+
 class Constituency(ObjectType):
     id = String()
     name = String()
@@ -54,12 +69,14 @@ class Constituency(ObjectType):
     def resolve_candidates(parent, info):
         return parent['instance'].get_candidates()
 
+
 class Region(ObjectType):
     name = String()
     constituencies = List(Constituency)
 
     def resolve_constituencies(parent, info):
         return parent['constituencies'].values()
+
 
 class Election(ObjectType):
     name = String()
@@ -70,16 +87,18 @@ class Election(ObjectType):
     def resolve_regions(parent, info):
         return get_regions(parent)
 
+
 class Query(ObjectType):
-    election = Field(Election, etype = String(required = True), year = Int(required = True))
+    election = Field(Election, etype=String(
+        required=True), year=Int(required=True))
     all = List(Election)
-    candidate = Field(Candidate, name = String(required = True))
+    candidate = Field(Candidate, name=String(required=True))
 
     def resolve_election(self, info, etype, year):
         return get_election(etype, str(year))
 
     def resolve_all(self, info):
         return get_all_election()
-    
+
     def resolve_candidate(self, info, name):
         return get_candidate(name)

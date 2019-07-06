@@ -52,11 +52,13 @@ class RecordCollection:
         for category in category_list:
             if category in self.val_sum_set:
                 result[category] = {
+                    'name': category,
                     'amount': self.val_sum_set[category],
                     'item_count': self.item_count_set[category]
                 }
             else:
                 result[category] = {
+                    'name': category,
                     'amount': 0,
                     'item_count': 0
                 }
@@ -83,11 +85,6 @@ class RecordCollection:
     @property
     def total(self):
         return self.val_sum
-
-    @property
-    def items(self):
-        return [{'name': k, 'amount': v} for k, v in self.val_sum_set.items()]
-
 
 class PersonalFinanceData:
     def __init__(self):
