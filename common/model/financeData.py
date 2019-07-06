@@ -47,14 +47,19 @@ class RecordCollection:
         self.record_list.sort(key=getAmount)
         self.record_list = self.record_list[-300:]
 
-    def getRecords(self):
+    def getRecords(self, category_list = []):
         result = {}
-        for r_type, amount in self.val_sum_set.items():
-            item_count = self.item_count_set[r_type]
-            result[r_type] = {
-                'amount': amount,
-                'item_count': item_count
-            }
+        for category in category_list:
+            if category in self.val_sum_set:
+                result[category] = {
+                    'amount': self.val_sum_set[category],
+                    'item_count': self.item_count_set[category]
+                }
+            else:
+                result[category] = {
+                    'amount': 0,
+                    'item_count': 0
+                }
         
         result['top300'] = [
             {
@@ -106,3 +111,7 @@ class PersonalFinanceData:
     # when we don't have finance detail record. Use it to set summary
     def setOutcomeSummary(self, summary):
         self.outcome_records.setSummary(summary)
+
+
+INCOME_CATEGORY = ['個人捐贈收入', '營利事業捐贈收入', '政黨捐贈收入', '人民團體捐贈收入', '匿名捐贈收入', '其他收入']
+OUTCOME_CATEGORY = ['人事費用支出', '宣傳支出', '租用宣傳車輛支出', '租用競選辦事處支出', '集會支出', '交通旅運支出', '雜支支出', '返還捐贈支出', '繳庫支出', '公共關係費用支出']

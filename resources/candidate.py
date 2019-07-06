@@ -1,6 +1,7 @@
 from flask_restful import Resource
 from flask import abort
 from common.dataLoader.dataLoader import data
+from common.model.financeData import INCOME_CATEGORY, OUTCOME_CATEGORY
 import tenderServiceRunner
 
 class Candidate(Resource):
@@ -46,8 +47,8 @@ class Candidate(Resource):
             return None
         else:
             return {
-                'income': candidate.finance_data.income_records.getRecords(),
-                'outcome': candidate.finance_data.outcome_records.getRecords()
+                'income': candidate.finance_data.income_records.getRecords(INCOME_CATEGORY),
+                'outcome': candidate.finance_data.outcome_records.getRecords(OUTCOME_CATEGORY)
             }
 
     @classmethod
