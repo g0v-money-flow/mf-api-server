@@ -5,6 +5,7 @@ import time
 import pytz
 from common.dataLoader import tenderLoader
 
+
 class TenderService():
     def __init__(self, storage_file):
         self.storage_file = storage_file
@@ -29,7 +30,7 @@ class TenderService():
 
         latest_update = tenderLoader.getLatestUpdateTime()
         # latest_update = datetime(
-            # 2018, 8, 30, tzinfo=pytz.timezone('Asia/Taipei'))
+        # 2018, 8, 30, tzinfo=pytz.timezone('Asia/Taipei'))
         if latest_update is None:
             return
 
@@ -83,9 +84,12 @@ class TenderService():
                 last_update = company['max_date']
                 for d in data:
                     if company_name in d['winner'] and d['date'] > last_update:
-                        detail = tenderLoader.fetchTenderAmountAndDate(company_name, d['tender_api_url'])
+                        detail = tenderLoader.fetchTenderAmountAndDate(
+                            company_name, d['tender_api_url'])
+                        
                         if detail == None:
-                            print(company_name, d['tender_api_url'])
+                            continue
+                        
                         d['decisionDate'] = detail['date']
                         d['amount'] = detail['amount']
                         company['records'].append(d)
@@ -97,9 +101,10 @@ class TenderService():
                 }
                 for d in data:
                     if company_name in d['winner']:
-                        detail = tenderLoader.fetchTenderAmountAndDate(company_name, d['tender_api_url'])
+                        detail = tenderLoader.fetchTenderAmountAndDate(
+                            company_name, d['tender_api_url'])
                         if detail == None:
-                            print(company_name, d['tender_api_url'])
+                            continue
                         d['decisionDate'] = detail['date']
                         d['amount'] = detail['amount']
                         company['records'].append(d)
@@ -120,4 +125,3 @@ class TenderService():
     def _resetLastUpdateDate(self):
         self.remote_source_last_update = datetime(
             2016, 1, 1, tzinfo=pytz.timezone('Asia/Taipei'))
-

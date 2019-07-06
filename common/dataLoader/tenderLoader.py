@@ -112,11 +112,6 @@ def parseTenderDetailPage(company_name, body):
                             'amount': int(record['detail'][amount_key][:-1].replace(',', '')),
                             'date': int(''.join(date_arg))
                         }
-                    else:
-                        return {
-                            'amount': 0,
-                            'date': 0
-                        }
     return None
 
 
