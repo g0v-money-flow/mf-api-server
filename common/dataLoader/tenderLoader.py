@@ -1,13 +1,13 @@
-from datetime import datetime
 import requests
 import json
 import time
+import iso8601
 
 
 def getLatestUpdateTime():
     resp = requests.get('https://pcc.g0v.ronny.tw/api/getinfo')
     if resp.ok:
-        return datetime.fromisoformat(json.loads(resp.text)['最新資料時間'])
+        return self.remote_source_last_update = iso8601.parse_date(json.loads(resp.text)['最新資料時間'])
     else:
         return None
 
