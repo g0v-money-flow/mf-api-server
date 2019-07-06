@@ -32,7 +32,7 @@ def parseTendersPage(json_data, context):
         next_page = current_page + 1 if total_page > current_page else None
     else:
         next_page = None
-    
+
     if 'records' not in json_data:
         return next_page
 
@@ -47,7 +47,8 @@ def parseTendersPage(json_data, context):
             'unit_name': record['unit_name'],
             'title': brief['title'],
             'amount': 0,
-            'winner': getWinningBidder(brief['companies']['name_key'])
+            'winner': getWinningBidder(brief['companies']['name_key']),
+            'tender_api_url': record['tender_api_url']
         })
 
     return next_page
@@ -91,6 +92,33 @@ def fetchTendersByDate(date):
     return context
 
 
+def parseTenderDetailPage(company_name, body):
+    for record in body['records'][-1:]:
+        if 'detail' in record:
+            for key, val in record['detail'].items():
+                if val == company_name:
+                    if key.find(':得標廠商') < 0:
+                        continue
+
+                    amount_key = ':'.join(key.split(':')[0:3]+['決標金額'])
+                    if amount_key in record['detail']:
+                        return {
+                            'amount': int(record['detail'][amount_key][:-1].replace(',', '')),
+                            'date': record['detail']['決標資料:決標日期']
+                        }
+    return None
+
+
+def fetchTenderAmountAndDate(company_name, tender_api_url):
+    fetch_url = tender_api_url
+    resp = requests.get(fetch_url)
+    if resp.ok:
+        json_body = json.loads(resp.text)
+        return parseTenderDetailPage(company_name, json_body)
+    else:
+        return None
+
+
 def exportTenderRepository(filename, repository):
     with open(filename, 'w+') as file:
         json.dump(repository, file)
@@ -106,5 +134,7 @@ def loadTenderRepository(filename):
 
 
 if __name__ == '__main__':
-    context = fetchTendersByDate(datetime(2016, 5, 10))
-    print(len(context))
+    url = 'http://pcc.g0v.ronny.tw/api/tender?unit_id=3.13.50&job_number=AGC0755002'
+
+    context = fetchTenderAmountAndDate('洋盟海運承攬運送股份有限公司', url)
+    print(context)
