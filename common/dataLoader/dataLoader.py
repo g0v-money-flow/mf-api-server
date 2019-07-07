@@ -31,13 +31,6 @@ def get_regions(election):
         'constituencies': region_obj
     } for region_name, region_obj in election.city_db.items()]
 
-def get_candidate(name):
-    for etype in data.values():
-        for e in etype.values():
-            for cand in e.cand_db.values():
-                if cand.name == name:
-                    return cand
-    return None
 
 PRESIDENT_SKIP_FINANCE_TYPE = [
     '個人捐贈收入', 

@@ -1,5 +1,5 @@
 from graphene import ObjectType, String, Int, Boolean, Float, List, Field
-from common.dataLoader.dataLoader import get_all_election, get_election, get_regions, get_candidate
+from common.dataLoader.dataLoader import get_all_election, get_election, get_regions
 from common.model.financeData import INCOME_CATEGORY, OUTCOME_CATEGORY
 
 
@@ -45,20 +45,11 @@ class Candidate(ObjectType):
     num_of_vote = Int()
     rate_of_vote = Float()
     finance = Field(Finance)
-    constituency = Field(lambda: Constituency)
     detail_link = String()
     id = Int()
 
     def resolve_finance(parent, info):
         return parent.finance_data
-
-    def resolve_constituency(parent, info):
-        spt = parent.region.name.find('第')
-        return {
-            'name': parent.region.name[spt:],
-            'id': parent.region.region_code,
-            'instance': parent.region
-        }
 
 
 class Constituency(ObjectType):
@@ -99,6 +90,3 @@ class Query(ObjectType):
 
     def resolve_all(self, info):
         return get_all_election()
-
-    def resolve_candidate(self, info, name):
-        return get_candidate(name)
