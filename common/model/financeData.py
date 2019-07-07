@@ -28,8 +28,8 @@ class RecordCollection:
         if record_type == '營利事業捐贈收入':
             self.company_set.add(record.record_obj)
         
-        # if record_type not in skip_finance_type:
-        self.record_list.append(record)
+        if record_type not in skip_finance_type:
+            self.record_list.append(record)
 
         if record_type not in self.item_count_set:
             self.item_count_set[record_type] = 1
@@ -41,11 +41,23 @@ class RecordCollection:
         self.val_sum_set[record_type] += record.amount
         self.val_sum += record.amount
 
-    def filterOutTop300Record(self):
+    def filterOutTop100Record(self):
         def getAmount(r):
-            return r.amount
-        self.record_list.sort(key=getAmount)
-        self.record_list = self.record_list[-300:]
+            return r['amount']
+
+        organize_dict = {}
+        for record in self.record_list:
+            if record.record_obj in organize_dict:
+                organize_dict[record.record_obj] += record.amount
+            else:
+                organize_dict[record.record_obj] = record.amount
+
+        self.record_list = [
+            {'obj': obj, 'amount': amount} 
+            for obj, amount in organize_dict.items()
+        ]
+        self.record_list.sort(key=getAmount, reverse=True)
+        self.record_list = self.record_list[:100]
 
     def getRecords(self, category_list = []):
         result = {}
@@ -63,11 +75,10 @@ class RecordCollection:
                     'item_count': 0
                 }
         
-        result['top300'] = [
+        result['top100'] = [
             {
-                'amount': record.amount, 
-                'object': record.record_obj,
-                'type': record.record_type
+                'amount': record['amount'], 
+                'object': record['obj']
             }
             for record in self.record_list]
 
@@ -98,8 +109,8 @@ class PersonalFinanceData:
         self.outcome_records.addRecord(record, skip_finance_type)
 
     def executeDataPostProcessing(self):
-        self.income_records.filterOutTop300Record()
-        self.outcome_records.filterOutTop300Record()
+        self.income_records.filterOutTop100Record()
+        self.outcome_records.filterOutTop100Record()
 
     # when we don't have finance detail record. Use it to set summary
     def setIncomeSummary(self, summary):

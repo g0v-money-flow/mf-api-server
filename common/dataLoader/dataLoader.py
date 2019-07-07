@@ -32,28 +32,14 @@ def get_regions(election):
     } for region_name, region_obj in election.city_db.items()]
 
 
-PRESIDENT_SKIP_FINANCE_TYPE = [
+SKIP_FINANCE_CATEGORY = [
     '個人捐贈收入', 
     '匿名捐贈', 
-    '匿名捐贈收入', 
-    '營利事業捐贈收入', 
-    '政黨捐贈收入', 
-    '人民團體捐贈收入',
-    '其他收入'
-    '集會支出',
-    '宣傳支出',
-    '人事費用支出',
-    '租用競選辦事處支',
-    '租用宣傳車輛支出',
+    '其他收入',
     '雜支支出', 
     '交通旅運支出',
     '返還支出',
     '繳庫支出'
-]
-
-LEGISLATOR_SKIP_FINANCE_TYPE = [
-    '個人捐贈收入', 
-    '匿名捐贈'
 ]
 
 def load_data(source):
@@ -64,12 +50,7 @@ def load_data(source):
     tks_file = source['tks_file']
     election_type = source['name']
     election_year = int(source['year'])
-    skip_finance_type = []
-
-    if election_type == 'legislator':
-        skip_finance_type = LEGISLATOR_SKIP_FINANCE_TYPE
-    elif election_type == 'president':
-        skip_finance_type = PRESIDENT_SKIP_FINANCE_TYPE
+    skip_finance_type = SKIP_FINANCE_CATEGORY
 
     election = Election(election_type, election_year)
     with open(base_file, 'r') as base_file:
