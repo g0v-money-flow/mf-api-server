@@ -85,29 +85,37 @@ class RecordCollection:
         ]
         self.record_list.sort(key=getAmount, reverse=True)
 
-    def getRecords(self, category_list=[]):
+    def getRecords(self, category_list=[], include_top100 = False):
         result = {}
+        items = []
         for category in category_list:
             if category in self.val_sum_set:
-                result[category] = {
-                    'name': category,
-                    'amount': self.val_sum_set[category],
-                    'item_count': self.item_count_set[category]
-                }
+                items.append(
+                    {
+                        'name': category,
+                        'amount': self.val_sum_set[category],
+                        'item_count': self.item_count_set[category]
+                    }
+                )
             else:
-                result[category] = {
-                    'name': category,
-                    'amount': 0,
-                    'item_count': 0
+                items.append(
+                    {
+                        'name': category,
+                        'amount': 0,
+                        'item_count': 0
+                    }
+                )
+        result['items'] = items
+        
+        if include_top100:
+            result['top100'] = [
+                {
+                    'amount': record['amount'],
+                    'object': record['obj'],
+                    'type': record['type']
                 }
-
-        result['top100'] = [
-            {
-                'amount': record['amount'],
-                'object': record['obj'],
-                'type': record['type']
-            }
-            for record in self.record_list]
+                for record in self.record_list]
+            result['total'] = self.val_sum
 
         return result
 

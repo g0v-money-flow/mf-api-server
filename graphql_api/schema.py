@@ -6,6 +6,7 @@ from common.model.financeData import INCOME_CATEGORY, OUTCOME_CATEGORY
 class FinanceCategoryItem(ObjectType):
     name = String()
     amount = Int()
+    item_count = Int()
 
 
 class FinanceOutcomeItem(ObjectType):
@@ -13,8 +14,7 @@ class FinanceOutcomeItem(ObjectType):
     items = List(FinanceCategoryItem)
 
     def resolve_items(parent, info):
-        records = parent.getRecords(OUTCOME_CATEGORY)
-        return [records[category] for category in OUTCOME_CATEGORY]
+        return parent.getRecords(OUTCOME_CATEGORY)['items']
 
 
 class FinanceIncomeItem(ObjectType):
@@ -22,8 +22,7 @@ class FinanceIncomeItem(ObjectType):
     items = List(FinanceCategoryItem)
 
     def resolve_items(parent, info):
-        records = parent.getRecords(INCOME_CATEGORY)
-        return [records[category] for category in INCOME_CATEGORY]
+        return parent.getRecords(INCOME_CATEGORY)['items']
 
 
 class Finance(ObjectType):

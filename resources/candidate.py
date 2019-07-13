@@ -48,8 +48,8 @@ class Candidate(Resource):
             return None
         else:
             return {
-                'income': candidate.finance_data.income_records.getRecords(INCOME_CATEGORY),
-                'outcome': candidate.finance_data.outcome_records.getRecords(OUTCOME_CATEGORY)
+                'income': candidate.finance_data.income_records.getRecords(INCOME_CATEGORY, True),
+                'outcome': candidate.finance_data.outcome_records.getRecords(OUTCOME_CATEGORY, True)
             }
 
     @classmethod
