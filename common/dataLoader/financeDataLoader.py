@@ -10,16 +10,19 @@ def loadFinanceSummary(root_folder):
             reader = csv.reader(summary_file)
             for line in reader:
                 try:
-                    _ = int(line[0])
+                    _ = int(float(line[0]))
                 except ValueError:
                     income_category = line[4:10]
                     outcome_category = line[14:24]
                     continue
 
                 name = line[1]
-                income_list = [int(v) for v in line[4:10]]
-                outcome_list = [int(v) for v in line[14:24]]
-
+                try:
+                    income_list = [int(float(v)) for v in line[4:10]]
+                    outcome_list = [int(float(v)) for v in line[14:24]]
+                except:
+                    continue
+                    
                 person_data = PersonalFinanceData()
                 person_data.setIncomeSummary(
                     {
