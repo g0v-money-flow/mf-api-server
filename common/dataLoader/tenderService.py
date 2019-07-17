@@ -34,23 +34,29 @@ class TenderService():
         if latest_update is None:
             return
 
+        is_first_fetch = False
         if self.remote_source_last_update:
             target_date = self.remote_source_last_update + timedelta(days=1)
         else:
             self._resetLastUpdateDate()
             target_date = self.remote_source_last_update
+            is_first_fetch = True
 
         print('start to sync remote data')
         nodata_company = [
             company for company in self.tracking_companies.keys() if self.getCompanyData(company) is None
         ]
-        if len(nodata_company) > 3000:
+        if len(nodata_company) > 1200:
             # reset target_date for re-fetching all tender data
             self._resetLastUpdateDate()
             target_date = self.remote_source_last_update
         else:
             for company in nodata_company:
                 self.loadCompany(company)
+
+            if is_first_fetch:
+                self.remote_source_last_update = latest_update
+                target_date = latest_update + timedelta(days=1)
 
         if latest_update >= target_date:
             while target_date <= latest_update:
@@ -124,4 +130,4 @@ class TenderService():
 
     def _resetLastUpdateDate(self):
         self.remote_source_last_update = datetime(
-            2016, 1, 1, tzinfo=pytz.timezone('Asia/Taipei'))
+            2019, 1, 1, tzinfo=pytz.timezone('Asia/Taipei'))
