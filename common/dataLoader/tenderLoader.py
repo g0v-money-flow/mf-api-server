@@ -108,10 +108,13 @@ def parseTenderDetailPage(company_name, body):
                         date_str = record['detail']['決標資料:決標日期']
                         date_arg = date_str.split('/')
                         date_arg[0] = str(int(date_arg[0]) + 1911)
-                        return {
-                            'amount': int(record['detail'][amount_key][:-1].replace(',', '')),
-                            'date': int(''.join(date_arg))
-                        }
+                        try:
+                            return {
+                                'amount': int(record['detail'][amount_key][:-1].replace(',', '')),
+                                'date': int(''.join(date_arg))
+                            }
+                        except:
+                            return None
     return None
 
 
