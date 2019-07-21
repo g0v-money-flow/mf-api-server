@@ -156,8 +156,7 @@ def load_data(source):
             data = financeDataLoader.getFinanceData(root_folder, cand_name, skip_finance_type)
             if data is not None:
                 cand.set_finance_data(data)
-            
-            if cand_name in finance_summary:
+            elif cand_name in finance_summary:
                 cand.set_finance_data(finance_summary[cand_name])
 
     # clean invalid region
