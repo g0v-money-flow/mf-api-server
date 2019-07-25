@@ -1,7 +1,7 @@
 import os
 import re
 
-FOLDER_NAME_PATTERN = re.compile('^[a-z]+[0-9]+$')
+FOLDER_NAME_PATTERN = re.compile('^[a-zA-Z]+[0-9]+$')
 
 
 def findDataSource(folderName):
@@ -9,7 +9,7 @@ def findDataSource(folderName):
         return None
 
     root = 'common/dataSource/rawData/{}'.format(folderName)
-    name = re.findall('^[a-z]+', folderName)[0]
+    name = re.findall('^[a-zA-Z]+', folderName)[0]
     year = re.findall('[0-9]+$', folderName)[0]
 
     res = {
@@ -31,4 +31,4 @@ def findDataSource(folderName):
 
 def findAllData():
     folders = os.listdir('common/dataSource/rawData/')
-    return [findDataSource(f) for f in folders if re.match('^[a-zA-Z]+[0-9]+$', f)]
+    return [findDataSource(f) for f in folders if re.match(FOLDER_NAME_PATTERN, f)]

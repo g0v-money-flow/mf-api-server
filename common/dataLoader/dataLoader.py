@@ -79,7 +79,7 @@ def load_data(source):
             region = Region(region_code, name, city)
             election.region_db[region_code] = region
             
-            if city is not None:
+            if 'instance' not in city[region_code]:
                 city[region_code]['instance'] = region
 
     with open(party_file, 'r') as party_file:
@@ -96,6 +96,7 @@ def load_data(source):
         reader = csv.reader(cand_file)
         for line in reader:
             if line[15] == 'Y':
+                # this line is vice candidate
                 vice_list.append(line)
                 continue
 
@@ -176,13 +177,40 @@ def load_data(source):
 
 
 data_sources = findAllData()
-data = {
-    'legislator': {
-        source['year']: load_data(source)
-            for source in data_sources if source['name'] == 'legislator'
-    },
-    'president': {
-        source['year']: load_data(source)
-            for source in data_sources if source['name'] == 'president'
-    }
-}
+
+data = {}
+for source in data_sources:
+    if source['name'] not in data:
+        data[source['name']] = {}
+    data[source['name']][source['year']] = load_data(source)
+
+# bind legislatorIndigenous to legislator
+for year, election in data['legislatorIndigenous'].items():
+    if year in data['legislator']:
+        parentElection = data['legislator'][year]
+        childElection = election     # Montain legislator
+
+        CAT_NAME = '原住民'
+        CAT_KEY = 'indigenous'
+        for city_name, city in childElection.city_db.items():
+            # only one city
+            parentElection.city_db[CAT_NAME] = city
+        
+        for region_code, region in childElection.region_db.items():
+            # only one region
+            parentElection.region_db[CAT_KEY] = region
+            # replace region code with CAT_NAME
+            parentElection.city_db[CAT_NAME][CAT_KEY] = parentElection.city_db[CAT_NAME][region_code]
+            del parentElection.city_db[CAT_NAME][region_code]
+
+        for cand in parentElection.region_db[CAT_KEY].candidates.values():
+            parentElection.cand_db[cand.id] = cand
+
+del data['legislatorIndigenous']
+        
+
+
+            
+
+
+
