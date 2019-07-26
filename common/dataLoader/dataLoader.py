@@ -205,6 +205,7 @@ for year, election in data['legislatorIndigenous'].items():
 
         for cand in parentElection.region_db[CAT_KEY].candidates.values():
             parentElection.cand_db[cand.id] = cand
+            cand.election = parentElection
 
 del data['legislatorIndigenous']
         
