@@ -2,7 +2,7 @@ import csv
 import os
 from common.model.region import Region
 from common.model.party import Party
-from common.model.person import Person 
+from common.model.person import Person
 from common.model.candidate import Candidate
 from common.model.election import Election
 from common.dataLoader import financeDataLoader
@@ -16,31 +16,34 @@ def get_all_election():
             res.append(election)
     return res
 
+
 def get_election(e_type, e_year):
     if e_type not in data:
         return None
-        
+
     if e_year not in data[e_type]:
         return None
-    
+
     return data[e_type][e_year]
+
 
 def get_regions(election):
     return [{
-        'name':region_name,
+        'name': region_name,
         'constituencies': region_obj
     } for region_name, region_obj in election.city_db.items()]
 
 
 SKIP_FINANCE_CATEGORY = [
-    '個人捐贈收入', 
-    '匿名捐贈', 
+    '個人捐贈收入',
+    '匿名捐贈',
     '其他收入',
-    '雜支支出', 
+    '雜支支出',
     '交通旅運支出',
     '返還支出',
     '繳庫支出'
 ]
+
 
 def load_data(source):
     root_folder = source['root_folder']
@@ -71,14 +74,14 @@ def load_data(source):
             if city_name not in election.city_db:
                 election.city_db[city_name] = {}
             city = election.city_db[city_name]
-            city[region_code]={
+            city[region_code] = {
                 'name': region_name,
                 'id': region_code
             }
 
             region = Region(region_code, name, city)
             election.region_db[region_code] = region
-            
+
             if 'instance' not in city[region_code]:
                 city[region_code]['instance'] = region
 
@@ -103,11 +106,11 @@ def load_data(source):
             node = {}
             region_code = "-".join(line[0:5])
             if region_code == '00-000-01-000-0000':
-                #fix db elcand_P1.csv format error
+                # fix db elcand_P1.csv format error
                 region_code = '00-000-00-000-0000'
             region = election.region_db[region_code]
 
-            #the number only be used in region.
+            # the number only be used in region.
             node['num'] = line[5]
             node['person'] = Person(line[6])
             node['party'] = election.party_db[line[7]]
@@ -116,20 +119,20 @@ def load_data(source):
             else:
                 node['elected'] = False
 
-            candidate = Candidate(election, region, node['person'], node['party'], node['elected'])
+            candidate = Candidate(
+                election, region, node['person'], node['party'], node['elected'])
             region.put_candidate(node['num'], candidate)
             election.cand_db[candidate.id] = candidate
-            
-            
-        for line in vice_list:        
+
+        for line in vice_list:
             node = {}
             node['num'] = line[5]
             node['person'] = Person(line[6])
             region_code = "-".join(line[0:5])
             if region_code == '00-000-01-000-0000':
-                #fix db elcand_P1.csv format error
+                # fix db elcand_P1.csv format error
                 region_code = '00-000-00-000-0000'
-                
+
             region = election.region_db[region_code]
             candidate = region.get_candidate(node['num'])
             candidate.set_vice_candidate(node['person'])
@@ -154,26 +157,59 @@ def load_data(source):
     for region in election.region_db.values():
         for _, cand in region.candidates.items():
             cand_name = cand.person.name
-            data = financeDataLoader.getFinanceData(root_folder, cand_name, skip_finance_type)
+            data = financeDataLoader.getFinanceData(
+                root_folder, cand_name, skip_finance_type)
             if data is not None:
                 cand.set_finance_data(data)
             elif cand_name in finance_summary:
                 cand.set_finance_data(finance_summary[cand_name])
 
     # clean invalid region
-    delete_region = [region for region in election.region_db.values() if len(region.candidates) == 0]
+    delete_region = [region for region in election.region_db.values() if len(
+        region.candidates) == 0]
     for region in delete_region:
         code = region.region_code
         del region.city[code]
         del election.region_db[code]
-        
+
     # clean invalid city
-    delete_city = [id for id, city in election.city_db.items() if len(city) == 0]
+    delete_city = [id for id, city in election.city_db.items()
+                   if len(city) == 0]
     for id in delete_city:
         del election.city_db[id]
 
-
     return election
+
+
+def bindSpecialRegion(election_type, special_attr, chinese_name):
+    # for example: bind legislatorMountain to legislator as a independent consituency
+    CAT_NAME = chinese_name
+    CAT_KEY = '{}{}'.format(election_type, special_attr.capitalize())
+
+    if CAT_KEY not in data:
+        return
+
+    for year, election in data[CAT_KEY].items():
+        if year in data[election_type]:
+            parentElection = data[election_type][year]
+            childElection = election     # Montain legislator
+
+            for _, city in childElection.city_db.items():
+                # only one city
+                parentElection.city_db[CAT_NAME] = city
+
+            for region_code, region in childElection.region_db.items():
+                # only one region
+                parentElection.region_db[CAT_KEY] = region
+                # replace region code with CAT_NAME
+                parentElection.city_db[CAT_NAME][CAT_KEY] = parentElection.city_db[CAT_NAME][region_code]
+                del parentElection.city_db[CAT_NAME][region_code]
+
+            for cand in parentElection.region_db[CAT_KEY].candidates.values():
+                parentElection.cand_db[cand.id] = cand
+                cand.election = parentElection
+
+    del data[CAT_KEY]
 
 
 data_sources = findAllData()
@@ -184,34 +220,5 @@ for source in data_sources:
         data[source['name']] = {}
     data[source['name']][source['year']] = load_data(source)
 
-# bind legislatorIndigenous to legislator
-for year, election in data['legislatorIndigenous'].items():
-    if year in data['legislator']:
-        parentElection = data['legislator'][year]
-        childElection = election     # Montain legislator
-
-        CAT_NAME = '原住民'
-        CAT_KEY = 'indigenous'
-        for city_name, city in childElection.city_db.items():
-            # only one city
-            parentElection.city_db[CAT_NAME] = city
-        
-        for region_code, region in childElection.region_db.items():
-            # only one region
-            parentElection.region_db[CAT_KEY] = region
-            # replace region code with CAT_NAME
-            parentElection.city_db[CAT_NAME][CAT_KEY] = parentElection.city_db[CAT_NAME][region_code]
-            del parentElection.city_db[CAT_NAME][region_code]
-
-        for cand in parentElection.region_db[CAT_KEY].candidates.values():
-            parentElection.cand_db[cand.id] = cand
-            cand.election = parentElection
-
-del data['legislatorIndigenous']
-        
-
-
-            
-
-
-
+bindSpecialRegion('legislator', 'mountain', '山地立委')
+bindSpecialRegion('legislator', 'land', '平地立委')
