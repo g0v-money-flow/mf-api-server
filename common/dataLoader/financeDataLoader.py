@@ -64,7 +64,7 @@ def isValidElectionType(root_folder_name, election_type):
     if root_folder_name == 'mayor2018':
         if election_type == '107年直轄市市長選舉' or election_type == '107年縣(市)長選舉':
             return True
-    elif root_folder_name == 'council2018':
+    elif root_folder_name == 'council2018' or root_folder_name == 'councilLand2018' or root_folder_name == 'councilMountain2018':
         if election_type == '107年直轄市議員選舉' or election_type == '107年縣(市)議員選舉':
             return True
 
