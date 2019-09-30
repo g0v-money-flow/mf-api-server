@@ -212,6 +212,32 @@ def bindSpecialRegion(election_type, special_attr, chinese_name):
     del data[CAT_KEY]
 
 
+def bindSpecialConsituency(election_type, special_attr, chinese_name):
+    # for example: bind legislatorMountain to legislator as a independent consituency
+    CAT_KEY = '{}{}'.format(election_type, special_attr.capitalize())
+
+    if CAT_KEY not in data:
+        return
+
+    for year, election in data[CAT_KEY].items():
+        if year in data[election_type]:
+            parentElection = data[election_type][year]
+            childElection = election     # Montain council
+
+            for city_name, city in childElection.city_db.items():
+                for region_code, region in city.items():
+                    parentElection.city_db[city_name][region_code] = region
+                    region['name'] = region['name'] + '(' + chinese_name + ')'
+                    region['instance'].name = region['name']
+
+            for _, region in childElection.region_db.items():
+                for cand in region.candidates.values():
+                    parentElection.cand_db[cand.id] = cand
+                    cand.election = parentElection
+
+    del data[CAT_KEY]
+
+
 data_sources = findAllData()
 
 data = {}
@@ -222,3 +248,5 @@ for source in data_sources:
 
 bindSpecialRegion('legislator', 'mountain', '山地立委')
 bindSpecialRegion('legislator', 'land', '平地立委')
+bindSpecialConsituency('council', 'mountain', '山地原住民')
+bindSpecialConsituency('council', 'land', '平地原住民')
