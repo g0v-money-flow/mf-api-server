@@ -157,8 +157,20 @@ def load_data(source):
     finance_summary = financeDataLoader.loadFinanceSummary(root_folder)
     for region in election.region_db.values():
         for _, cand in region.candidates.items():
+            city_name = None
+            # get city_name
+            for k, v in election.city_db.items():
+                if v == region.city:
+                    city_name = k
+                    break
+
             cand_name = cand.person.name
-            for name in [cand_name, re.split("[a-zA-Z]+", cand_name)[0]]:
+            for name in [
+                '{}-{}'.format(city_name, cand_name), # filename include region name
+                cand_name, # filename is candidate name only
+                '{}-{}'.format(city_name, re.split("[a-zA-Z]+", cand_name)[0]), # filename include region name, and candidate name excludes english
+                re.split("[a-zA-Z]+", cand_name)[0]  # candidate name only and candidate name excludes english
+            ]:
                 data = financeDataLoader.getFinanceData(
                     root_folder, name, skip_finance_type)
                 if data is not None:
