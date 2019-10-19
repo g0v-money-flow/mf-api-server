@@ -142,10 +142,22 @@ def load_data(source):
         reader = csv.reader(ticket_file)
         for line in reader:
             node = {}
-            region_code = "-".join(line[0:5])
-            if region_code not in election.region_db:
+
+            # == the raw data may have issue the region code has format error ==
+            # == try two case to fix it
+            region_code1 = "-".join(line[0:5])
+            line[2] = '01'
+            region_code2 = '-'.join(line[0:5])
+
+            region = None
+            for code in [region_code1, region_code2]:
+                if code in election.region_db:
+                    region = election.region_db[code]
+                    break
+            # =============================
+            if region is None:
                 continue
-            region = election.region_db[region_code]
+
             node['num'] = line[6]
             node['num_of_vote'] = line[7]
             node['rate_of_vote'] = line[8]
@@ -176,7 +188,7 @@ def load_data(source):
                 if data is not None:
                     cand.set_finance_data(data)
                     break
-                elif name in finance_summary:
+                elif finance_summary and name in finance_summary:
                     cand.set_finance_data(finance_summary[name])
                     break
 
