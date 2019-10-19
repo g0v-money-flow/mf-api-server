@@ -130,4 +130,4 @@ class TenderService():
 
     def _resetLastUpdateDate(self):
         self.remote_source_last_update = datetime(
-            2019, 1, 1, tzinfo=pytz.timezone('Asia/Taipei'))
+            2010, 1, 1, tzinfo=pytz.timezone('Asia/Taipei'))
