@@ -1,4 +1,5 @@
 import csv
+import re
 import os
 from common.model.region import Region
 from common.model.party import Party
@@ -157,12 +158,15 @@ def load_data(source):
     for region in election.region_db.values():
         for _, cand in region.candidates.items():
             cand_name = cand.person.name
-            data = financeDataLoader.getFinanceData(
-                root_folder, cand_name, skip_finance_type)
-            if data is not None:
-                cand.set_finance_data(data)
-            elif cand_name in finance_summary:
-                cand.set_finance_data(finance_summary[cand_name])
+            for name in [cand_name, re.split("[a-zA-Z]+", cand_name)[0]]:
+                data = financeDataLoader.getFinanceData(
+                    root_folder, name, skip_finance_type)
+                if data is not None:
+                    cand.set_finance_data(data)
+                    break
+                elif name in finance_summary:
+                    cand.set_finance_data(finance_summary[name])
+                    break
 
     # clean invalid region
     delete_region = [region for region in election.region_db.values() if len(
