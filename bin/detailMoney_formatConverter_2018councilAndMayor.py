@@ -28,14 +28,21 @@ def exportResult(folder, filename, result):
     ])
 
     for row in result:
+      income = int(float(row['income']))
+      outcome = int(float(row['outcome']))
+      if income == 0:
+        income = None
+      if outcome == 0:
+        outcome = None
+
       writer.writerow([
         1,
         row['date'],
         row['record_type'],
         row['record_obj'],
         row['id_number'],
-        int(float(row['income'])),
-        int(float(row['outcome'])),
+        income,
+        outcome,
         'a',
         row['address']
       ])
