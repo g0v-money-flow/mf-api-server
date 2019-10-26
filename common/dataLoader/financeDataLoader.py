@@ -135,7 +135,7 @@ def getFinanceData(root_folder, name, skip_finance_type=[]):
                 outcome = line[6]
                 address = line[7]
 
-                if income:
+                if income and str(income) != '0':
                     value = int(income.replace(',', ''))
                     t = Record(date, record_type, record_obj,
                                id_number, address, value)
