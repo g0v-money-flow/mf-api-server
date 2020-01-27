@@ -77,7 +77,7 @@ def load_data(source):
                     try:
                         city_name = election.region_db[city_code].name
                     except:
-                        print("Err: city_name error," + election_type + election_year + " "+ name)
+                        print("Err: city_name error," + election_type + str(election_year) + " "+ name)
                         pass
 
             if city_name not in election.city_db:
