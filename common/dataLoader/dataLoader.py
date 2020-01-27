@@ -106,10 +106,12 @@ def load_data(source):
 
             node = {}
             region_code = "-".join(line[0:5])
-            if region_code == '00-000-01-000-0000':
-                # fix db elcand_P1.csv format error
-                region_code = '00-000-00-000-0000'
-            region = election.region_db[region_code]
+            if region_code in election.region_db:
+                region = election.region_db[region_code]
+            else:
+                # there may be only one constituency. so the elbase.csv can't match candidate info 
+                region_code = region_code[:7] + '00' +region_code[9:]
+                region = election.region_db[region_code]
 
             # the number only be used in region.
             node['num'] = line[5]
