@@ -71,10 +71,14 @@ def load_data(source):
             else:
                 city_name = name
                 region_name = name
-                
+
                 city_code = region_code[:7] + '00-000-0000'
                 if city_code != region_code:
-                    city_name = election.region_db[city_code].name
+                    try:
+                        city_name = election.region_db[city_code].name
+                    except:
+                        print("Err: city_name error," + election_type + election_year + " "+ name)
+                        pass
 
             if city_name not in election.city_db:
                 election.city_db[city_name] = {}
