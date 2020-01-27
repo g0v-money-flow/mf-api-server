@@ -28,12 +28,15 @@ def exportResult(folder, filename, result):
     ])
 
     for row in result:
-      income = int(float(row['income']))
-      outcome = int(float(row['outcome']))
-      if income == 0:
-        income = None
-      if outcome == 0:
-        outcome = None
+      try:
+        income = int(float(row['income']))
+        outcome = int(float(row['outcome']))
+        if income == 0:
+          income = None
+        if outcome == 0:
+          outcome = None
+      except ValueError:
+        continue
 
       writer.writerow([
         1,
