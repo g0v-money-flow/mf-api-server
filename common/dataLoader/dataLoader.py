@@ -77,7 +77,7 @@ def load_data(source):
                     try:
                         city_name = election.region_db[city_code].name
                     except:
-                        print("WARN: city_name error," + election_type + str(election_year))
+                        #print("WARN: city_name error," + election_type + str(election_year))
                         pass
 
             if city_name not in election.city_db:
@@ -151,30 +151,35 @@ def load_data(source):
     with open(tks_file, 'r') as ticket_file:
         reader = csv.reader(ticket_file)
         for line in reader:
-            node = {}
-
-            # == the raw data may have issue the region code has format error ==
-            # == try two case to fix it
-            region_code1 = "-".join(line[0:5])
-            line[2] = '01'
-            region_code2 = '-'.join(line[0:5])
-
-            region = None
-            for code in [region_code1, region_code2]:
-                if code in election.region_db:
-                    region = election.region_db[code]
-                    break
-            # =============================
-            if region is None:
+            if line[5] != '0':
+                # we don't need to know info of each billing office
                 continue
 
+            node = {}
             node['num'] = line[6]
             node['num_of_vote'] = line[7]
             node['rate_of_vote'] = line[8]
 
+ # == the raw data may have issue the region code has format error ==
+            # == try two case to fix it
+            region_codes = []
+            for reg_num in [line[2], '01', '00']:
+                region_codes.append("-".join(line[0:2] + [reg_num] + line[3:5]))
+
+            region = None
+            for code in region_codes:
+                if code in election.region_db:
+                    region = election.region_db[code]
+                    break
+                    
+            # =============================
+            if region is None:
+                continue
+                    
             candidate = region.get_candidate(node['num'])
             if candidate is not None:
                 candidate.set_result(node['num_of_vote'], node['rate_of_vote'])
+
 
     finance_summary = financeDataLoader.loadFinanceSummary(root_folder)
     for region in election.region_db.values():
