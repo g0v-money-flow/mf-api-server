@@ -3,7 +3,9 @@ FLASK_ENV=production
 
 all: install
 	gunicorn -c config.py wsgi:app
-	#python3 -m flask run --no-debugger --no-reload
+
+dev-server: 
+	python3 -m flask run --no-debugger --no-reload
 
 install:
 	pip install -r requirements.txt
