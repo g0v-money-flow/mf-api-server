@@ -52,7 +52,7 @@ pytest-cov==2.7.1
 python-slugify==3.0.2
 pytimeparse==1.1.8
 pytz==2019.1
-PyYAML==5.1.1
+PyYAML==5.4
 requests==2.22.0
 Rx==1.6.1
 six==1.12.0
